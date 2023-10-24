@@ -3,12 +3,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
+  
   <groupId>com.parasoft</groupId>
   <artifactId>soatest-maven-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
   <version>1.0.0-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
 
   <name>Parasoft SOAtest Maven Plugin</name>
   <description>This plugin is available from Parasoft under an open-source license.</description>
@@ -111,57 +111,46 @@
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-	  <version>${maven-clean-plugin.version}</version>
+          <version>${maven-clean-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-	  <version>${maven-plugin-tools.version}</version>
+          <version>${maven-plugin-tools.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-	  <version>${maven-resources-plugin.version}</version>
+          <version>${maven-resources-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-	  <version>${maven-compiler-plugin.version}</version>
+          <version>${maven-compiler-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-	  <version>${maven-surefire-plugin.version}</version>
+          <version>${maven-surefire-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-	  <version>${maven-jar-plugin.version}</version>
+          <version>${maven-jar-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-	  <version>${maven-install-plugin.version}</version>
+          <version>${maven-install-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-	  <version>${maven-deploy-plugin.version}</version>
+          <version>${maven-deploy-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-invoker-plugin</artifactId>
-	  <version>${maven-invoker-plugin.version}</version>
+          <version>${maven-invoker-plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-	<version>${maven-surefire-plugin.version}</version>
-        <configuration>
-          <additionalClasspathElements>
-            <additionalClasspathElement>src/test/java/</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>${maven-plugin-tools.version}</version>
         <configuration>
           <!-- <goalPrefix>maven-archetype-plugin</goalPrefix> -->
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -192,7 +181,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-	    <version>${maven-invoker-plugin.version}</version>
             <configuration>
               <debug>true</debug>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
