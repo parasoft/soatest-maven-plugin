@@ -13,10 +13,10 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-my-plugin</artifactId>
+        <groupId>com.parasoft</groupId>
+        <artifactId>soatest-maven-plugin</artifactId>
         <configuration>
-          <!-- Specify the MyMojo parameter -->
-          <outputDirectory>target/test-harness/project-to-test</outputDirectory>
+            <soatestHome>parasoft/soatest</soatestHome>
         </configuration>
       </plugin>
     </plugins>

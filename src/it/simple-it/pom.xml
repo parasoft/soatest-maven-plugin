@@ -26,6 +26,9 @@
             <goals>
               <goal>soatest</goal>
             </goals>
+            <configuration>
+              <config>soatest.user://Example Configuration</config>
+            </configuration>
           </execution>
         </executions>
       </plugin>

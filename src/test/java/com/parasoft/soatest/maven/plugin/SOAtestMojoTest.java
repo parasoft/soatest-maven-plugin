@@ -16,27 +16,33 @@
 
 package com.parasoft.soatest.maven.plugin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.withSettings;
+
+import java.io.File;
+import java.util.List;
+
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.WithoutMojo;
-
 import org.junit.Rule;
-import static org.junit.Assert.*;
 import org.junit.Test;
-import java.io.File;
+import org.mockito.MockedConstruction;
 
-public class SOAtestMojoTest
-{
+public class SOAtestMojoTest {
     @Rule
-    public MojoRule rule = new MojoRule()
-    {
+    public MojoRule rule = new MojoRule() {
         @Override
-        protected void before() throws Throwable 
-        {
+        protected void before() throws Throwable {
         }
 
         @Override
-        protected void after()
-        {
+        protected void after() {
         }
     };
 
@@ -44,25 +50,28 @@ public class SOAtestMojoTest
      * @throws Exception if any
      */
     @Test
-    public void testSomething()
-            throws Exception
-    {
+    public void testSomething() throws Exception {
         File pom = new File("target/test-classes/project-to-test/");
         assertNotNull(pom);
         assertTrue(pom.exists());
 
         SOAtestMojo soatestMojo = (SOAtestMojo) rule.lookupConfiguredMojo(pom, "soatest");
         assertNotNull(soatestMojo);
-        soatestMojo.execute();
+        Process process = mock(Process.class);
+        try (MockedConstruction<ProcessBuilder> processBuilder = mockConstruction(ProcessBuilder.class,
+                withSettings().defaultAnswer(CALLS_REAL_METHODS),
+                (mock, context) -> doReturn(process).when(mock).start())) {
+            soatestMojo.execute();
+            List<ProcessBuilder> constructed = processBuilder.constructed();
+            assertEquals(2, constructed.size());
+        }
     }
 
     /** Do not need the MojoRule. */
     @WithoutMojo
     @Test
-    public void testSomethingWhichDoesNotNeedTheMojoAndProbablyShouldBeExtractedIntoANewClassOfItsOwn()
-    {
+    public void testSomethingWhichDoesNotNeedTheMojoAndProbablyShouldBeExtractedIntoANewClassOfItsOwn() {
         assertTrue(true);
     }
 
 }
-
