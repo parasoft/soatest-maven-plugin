@@ -1,0 +1,37 @@
+ ------
+ Introduction
+ ------
+ Matt Love
+ ------
+ 2023-10-26
+ ------
+
+
+${project.name}
+
+  The SOAtest Maven Plugin is a convenient way to execute functional tests with Parasoft SOAtest as part of a Maven project lifecycle.  A licensed installation of SOAtest on the same machine is required to be set in the {{{./soatest-mojo.html#soatestHome}SOATEST_HOME}} environment variable, user property, or plugin configuration.  This plugin requires Java 8+ and Maven 3.9.
+
+* Goals Overview
+
+  General information about the goals.
+
+  * {{{./help-mojo.html}soatest:help}} Display help information on soatest-maven-plugin.
+
+  Call <<<mvn com.parasoft:soatest-maven-plugin:help -Ddetail=true -Dgoal=soatest>>> to display parameter details.
+
+  * {{{./soatest-mojo.html}soatest:soatest}} Execute functional tests with Parasoft SOAtest.
+
+  Call <<<mvn com.parasoft:soatest-maven-plugin:soatest -Dsoatest.config="soatest.builtin://Demo Configuration">>> to run functional tests in the current project.
+
+* Technical Support
+
+  In case you have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}}.
+
+  If you feel like the plugin is missing a feature or has a defect, please contact
+  {{{mailto:support@parasoft.com}support@parasoft.com}}. When reporting an issue, please provide a comprehensive description of your
+  concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
+  entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
+  Of course, patches are welcome, too. Contributors can check out the project from our
+  {{{./scm.html}source repository}} and will find supplementary information in the
+  {{{https://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}. 
+

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 https://maven.apache.org/xsd/decoration-1.8.0.xsd"
+  name="SOAtest Maven Plugin">
+  <bannerLeft>
+    <name>Parasoft</name>
+    <src>images/parasoft.svg</src>
+    <href>https://www.parasoft.com</href>
+  </bannerLeft>
+  <body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="plugin-info.html#Usage"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
+  </body>
+</project>

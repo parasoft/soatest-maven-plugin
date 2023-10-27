@@ -10,9 +10,10 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Parasoft SOAtest Maven Plugin</name>
+  <name>SOAtest Maven Plugin</name>
   <description>This plugin is available from Parasoft under an open-source license.</description>
   <url>https://github.com/parasoft/soatest-maven-plugin</url>
+  <inceptionYear>2023</inceptionYear>
 
   <prerequisites>
     <maven>${maven.version}</maven>
@@ -30,7 +31,9 @@
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-plugin-tools.version>3.10.1</maven-plugin-tools.version>
     <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
+    <maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
     <maven-surefire-plugin.version>3.2.1</maven-surefire-plugin.version>
     <junit.version>4.13.2</junit.version>
     <mockito.version>4.11.0</mockito.version>
@@ -71,7 +74,7 @@
   <scm>
     <url>https://github.com/parasoft/soatest-maven-plugin</url>
     <connection>scm:git:https://github.com/parasoft/soatest-maven-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:parasoft/soatest-maven-plugin.git</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com/parasoft/soatest-maven-plugin.git</developerConnection>
     <tag>master</tag>
   </scm>
 
@@ -170,23 +173,23 @@
           <artifactId>maven-invoker-plugin</artifactId>
           <version>${maven-invoker-plugin.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven-project-info-reports-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <configuration>
-          <!-- <goalPrefix>maven-archetype-plugin</goalPrefix> -->
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-        </configuration>
         <executions>
-          <execution>
-            <id>mojo-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
           <execution>
             <id>help-goal</id>
             <goals>
@@ -197,6 +200,16 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-report-plugin</artifactId>
+        <version>${maven-plugin-tools.version}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
