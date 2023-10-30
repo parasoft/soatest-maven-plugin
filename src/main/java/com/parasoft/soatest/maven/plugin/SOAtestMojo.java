@@ -133,18 +133,30 @@ public class SOAtestMojo extends AbstractMojo {
             baseCommand.add(soatestcli);
             baseCommand.add("-data"); //$NON-NLS-1$
             baseCommand.add(workspace.toAbsolutePath().toString());
-            List<File> projectDirs = toImport != null && !toImport.isEmpty() ? toImport
+            List<File> projectLocs = toImport != null && !toImport.isEmpty() ? toImport
                     : Collections.singletonList(project.getBasedir());
-            for (File projectDir : projectDirs) {
-                if (!projectDir.exists()) {
-                    throw new MojoExecutionException(Messages.get("invalid.project.exists", projectDir)); //$NON-NLS-1$
+            for (File projectLoc : projectLocs) {
+                if (!projectLoc.exists()) {
+                    throw new MojoExecutionException(Messages.get("invalid.project.exists", projectLoc)); //$NON-NLS-1$
                 }
-                if (!new File(projectDir, ".project").exists()) { //$NON-NLS-1$
-                    throw new MojoExecutionException(Messages.get("invalid.project.dotproject", projectDir)); //$NON-NLS-1$
+                if (projectLoc.isFile()) {
+                    if (!".project".equals(projectLoc.getName())) { //$NON-NLS-1$
+                        throw new MojoExecutionException(Messages.get("invalid.project.file", projectLoc)); //$NON-NLS-1$
+                    }
+                } else {
+                    try (Stream<Path> walkStream = Files.walk(projectLoc.toPath())) {
+                        if (!walkStream.filter(Files::isRegularFile)
+                                .filter(p -> ".project".equals(p.getFileName().toString())) //$NON-NLS-1$
+                                .findFirst().isPresent()) {
+                            throw new MojoExecutionException(Messages.get("invalid.project.dotproject", projectLoc)); //$NON-NLS-1$
+                        }
+                    } catch (IOException e) {
+                        log.warn(e);
+                    }
                 }
                 List<String> command = new ArrayList<>(baseCommand);
                 command.add("-import"); //$NON-NLS-1$
-                command.add(projectDir.getAbsolutePath());
+                command.add(projectLoc.getAbsolutePath());
                 runCommand(log, command);
             }
         }
