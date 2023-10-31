@@ -173,6 +173,13 @@ public class SOAtestMojo extends AbstractMojo {
     @Parameter(property = "soatest.datasourcerow")
     private String dataSourceRow;
 
+    /**
+     * An absolute or relative path to the .properties file that includes
+     * custom configuration settings.
+     */
+    @Parameter(property = "soatest.settings")
+    private File settings;
+
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
     }
@@ -229,7 +236,8 @@ public class SOAtestMojo extends AbstractMojo {
         }
         baseCommand.add("-data"); //$NON-NLS-1$
         baseCommand.add(workspace.toAbsolutePath().toString());
-        return baseCommand;
+        addOptionalCommand("-settings", settings, baseCommand); //$NON-NLS-1$
+        return Collections.unmodifiableList(baseCommand);
     }
 
     private void runImport(Log log, List<String> baseCommand) throws MojoExecutionException {
@@ -283,6 +291,13 @@ public class SOAtestMojo extends AbstractMojo {
     private static void addOptionalCommand(String name, boolean value, List<String> command) {
         if (value) {
             command.add(name);
+        }
+    }
+
+    private static void addOptionalCommand(String name, File value, List<String> command) {
+        if (value != null) {
+            command.add(name);
+            command.add(value.getAbsolutePath());
         }
     }
 

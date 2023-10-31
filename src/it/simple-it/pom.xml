@@ -29,6 +29,7 @@
             </goals>
             <configuration>
               <config>soatest.user://Example Configuration</config>
+              <settings>${project.basedir}/settings.properties</settings>
             </configuration>
           </execution>
         </executions>

@@ -17,6 +17,7 @@
         <artifactId>soatest-maven-plugin</artifactId>
         <configuration>
             <soatestHome>parasoft/soatest</soatestHome>
+            <settings>${project.basedir}/settings.properties</settings>
         </configuration>
       </plugin>
     </plugins>
