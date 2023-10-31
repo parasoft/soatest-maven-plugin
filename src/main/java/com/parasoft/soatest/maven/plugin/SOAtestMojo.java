@@ -112,6 +112,24 @@ public class SOAtestMojo extends AbstractMojo {
     private String appconsole;
 
     /**
+     * Disables building of projects before executing the tests.
+     */
+    @Parameter(property = "soatest.nobuild", defaultValue = "false")
+    private boolean nobuild; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
+     * Refreshes the workspace, forcing it to resync with the file system.
+     */
+    @Parameter(property = "soatest.refresh", defaultValue = "false")
+    private boolean refresh; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
+     * Prints detailed test progress information to the console.
+     */
+    @Parameter(property = "soatest.showdetails", defaultValue = "false")
+    private boolean showdetails; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
      * Specifies the active data source within a data group. This parameter must
      * be set to the location of an XML file that specifies the active data
      * source for each data group within each .tst file contained in the test
@@ -243,10 +261,19 @@ public class SOAtestMojo extends AbstractMojo {
         command.add("-config"); //$NON-NLS-1$
         command.add(config);
         addOptionalCommand("-appconsole", appconsole, command); //$NON-NLS-1$
+        addOptionalCommand("-nobuild", nobuild, command); //$NON-NLS-1$
+        addOptionalCommand("-refresh", refresh, command); //$NON-NLS-1$
+        addOptionalCommand("-showdetails", showdetails, command); //$NON-NLS-1$
         addOptionalCommand("-dataGroupConfig", dataGroupConfig, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceRow", dataSourceRow, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
         runCommand(log, command);
+    }
+
+    private static void addOptionalCommand(String name, boolean value, List<String> command) {
+        if (value) {
+            command.add(name);
+        }
     }
 
     private static void addOptionalCommand(String name, String value, List<String> command) {
