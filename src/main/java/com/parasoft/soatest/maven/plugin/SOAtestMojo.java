@@ -181,12 +181,20 @@ public class SOAtestMojo extends AbstractMojo {
      */
     @Parameter(property = "soatest.datasourcerow")
     private String dataSourceRow;
-    
+
     /**
      * Fails the build by returning a non-zero exit code if any violations are reported.
      */
     @Parameter(property = "soatest.fail", defaultValue = "false")
     private boolean fail; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
+     * Prints the current settings and customizations along with information
+     * regarding where they are configured (for example, in the
+     * settings.properties file).
+     */
+    @Parameter(property = "soatest.showsettings", defaultValue = "false")
+    private boolean showsettings; // parasoft-suppress OPT.CTLV "injected"
 
     /**
      * An absolute or relative path to the .properties file that includes
@@ -302,6 +310,7 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-dataSourceRow", dataSourceRow, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
         addOptionalCommand("-fail", fail, command); //$NON-NLS-1$
+        addOptionalCommand("-showsettings", showsettings, command); //$NON-NLS-1$
         runCommand(log, command);
     }
 
