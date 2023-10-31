@@ -49,6 +49,12 @@ public class SOAtestMojo extends AbstractMojo {
     private MavenProject project;
 
     /**
+     * Skips running SOAtest.
+     */
+    @Parameter(property = "soatest.skip", defaultValue = "false")
+    private boolean skip; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
      * Specifies the location of the Parasoft SOAtest installation.
      */
     @Parameter(property = "soatest.home", defaultValue = "${env.SOATEST_HOME}")
@@ -174,6 +180,10 @@ public class SOAtestMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         Log log = getLog();
+        if (skip) {
+            log.info(Messages.get("soatest.skip")); //$NON-NLS-1$
+            return;
+        }
         if (soatestHome == null) {
             throw new MojoExecutionException(Messages.get("soatest.home.not.set")); //$NON-NLS-1$
         }
