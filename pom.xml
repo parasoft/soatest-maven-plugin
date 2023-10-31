@@ -70,6 +70,13 @@
       <organization>Parasoft</organization>
       <organizationUrl>https://www.parasoft.com</organizationUrl>
     </developer>
+    <developer>
+      <id>sbaranov-parasoft</id>
+      <name>Sergei Baranov</name>
+      <email>sbaranov@parasoft.com</email>
+      <organization>Parasoft</organization>
+      <organizationUrl>https://www.parasoft.com</organizationUrl>
+    </developer>
   </developers>
 
   <organization>

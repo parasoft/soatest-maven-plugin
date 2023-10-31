@@ -203,6 +203,32 @@ public class SOAtestMojo extends AbstractMojo {
     @Parameter(property = "soatest.settings")
     private File settings;
 
+     /**
+     * Filenames, paths to files, or patterns that matches filenames to be included during testing.
+     * The pattern matching syntax is similar to that of Ant file sets.
+     * You can also specify a list of patterns by adding them to a .lst file. Example:
+     * 
+     * <pre><code>{@literal <includes>}
+     *   {@literal <include>}tests1/*.tst{@literal </include>}
+     *   {@literal <include>**}/Test2.tst{@literal </include>}
+     * {@literal </includes>}</code></pre>
+     */
+    @Parameter(name = "includes", property = "soatest.includes")
+    private List<String> includes;
+
+    /**
+     * Filenames, paths to files, or patterns that matches filenames to be excluded during testing.
+     * The pattern matching syntax is similar to that of Ant file sets.
+     * You can also specify a list of patterns by adding them to a .lst file. Example:
+     * 
+     * <pre><code>{@literal <excludes>}
+     *   {@literal <exclude>}tests1/*.tst{@literal </exclude>}
+     *   {@literal <exclude>**}/Test2.tst{@literal </exclude>}
+     * {@literal </excludes>}</code></pre>
+     */
+    @Parameter(name = "excludes", property = "soatest.excludes")
+    private List<String> excludes;
+
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
     }
@@ -311,6 +337,18 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
         addOptionalCommand("-fail", fail, command); //$NON-NLS-1$
         addOptionalCommand("-showsettings", showsettings, command); //$NON-NLS-1$
+        if (includes != null) {
+            for (String include : includes) {
+                command.add("-include"); //$NON-NLS-1$
+                command.add(include);
+            }
+        }
+        if (excludes != null) {
+            for (String exclude : excludes) {
+                command.add("-exclude"); //$NON-NLS-1$
+                command.add(exclude);
+            }
+        }
         runCommand(log, command);
     }
 
