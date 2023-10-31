@@ -35,3 +35,6 @@ ${project.name}
   {{{./scm.html}source repository}} and will find supplementary information in the
   {{{https://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}. 
 
+* License
+
+  The SOAtest Maven Plugin is available under the {{{./licenses.html}Apache License, Version 2.0}}.

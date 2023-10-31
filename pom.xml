@@ -58,7 +58,7 @@
   </developers>
 
   <organization>
-    <name>Parasoft</name>
+    <name>Parasoft Corporation</name>
     <url>https://www.parasoft.com</url>
   </organization>
 
@@ -67,7 +67,7 @@
       <name>Apache-2.0</name>
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
-      <comments>A business-friendly OSS license</comments>
+      <comments>&copy; Copyright 2023 Parasoft Corporation</comments>
     </license>
   </licenses>
 
