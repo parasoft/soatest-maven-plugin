@@ -103,6 +103,44 @@ public class SOAtestMojo extends AbstractMojo {
     @Parameter(property = "soatest.config", required = true)
     private String config;
 
+    /**
+     * Specifies the active data source within a data group. This parameter must
+     * be set to the location of an XML file that specifies the active data
+     * source for each data group within each .tst file contained in the test
+     * run.
+     */
+    @Parameter(property = "soatest.datagroupconfig")
+    private String dataGroupConfig;
+
+    /**
+     * Specifies the name of the data source associated with the test(s) you
+     * want to run. See dataSourceRow for additional information.
+     */
+    @Parameter(property = "soatest.datasourcename")
+    private String dataSourceName;
+
+    /**
+     * Runs all tests with the specified data source rows(s). You can specify a
+     * list of row numbers or row ranges. The following values are examples of
+     * valid values:
+     *
+     * <ul>
+     * <li>5</li>
+     * <li>1,2,5</li>
+     * <li>3-9</li>
+     * <li>2-5,7,20-30</li>
+     * </ul>
+     *
+     * You can also specify {@code all} as the value to force all data source
+     * rows to be used, even if the data sources were saved to use only specific
+     * rows.
+     *
+     * You can use the dataSourceName option to specify which data source
+     * contains the row associated with the tests you want to execute.
+     */
+    @Parameter(property = "soatest.datasourcerow")
+    private String dataSourceRow;
+
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
     }
@@ -196,7 +234,17 @@ public class SOAtestMojo extends AbstractMojo {
         List<String> command = new LinkedList<>(baseCommand);
         command.add("-config"); //$NON-NLS-1$
         command.add(config);
+        addOptionalCommand("-dataGroupConfig", dataGroupConfig, command); //$NON-NLS-1$
+        addOptionalCommand("-dataSourceRow", dataSourceRow, command); //$NON-NLS-1$
+        addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
         runCommand(log, command);
+    }
+
+    private static void addOptionalCommand(String name, String value, List<String> command) {
+        if (value != null && !value.trim().isEmpty()) {
+            command.add(name);
+            command.add(value);
+        }
     }
 
     private static void runCommand(Log log, List<String> command) throws MojoExecutionException {

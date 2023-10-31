@@ -56,6 +56,13 @@
       <organization>Parasoft</organization>
       <organizationUrl>https://www.parasoft.com</organizationUrl>
     </developer>
+    <developer>
+      <id>tony-parasoft</id>
+      <name>Tony Yoshicedo</name>
+      <email>tyoshicedo@parasoft.com</email>
+      <organization>Parasoft</organization>
+      <organizationUrl>https://www.parasoft.com</organizationUrl>
+    </developer>
   </developers>
 
   <organization>
