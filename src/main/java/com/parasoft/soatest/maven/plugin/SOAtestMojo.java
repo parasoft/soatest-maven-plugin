@@ -63,12 +63,10 @@ public class SOAtestMojo extends AbstractMojo {
     /**
      * Specifies additional JVM options. Example:
      *
-     * <pre><code>
-     * {@literal <vmArgs>}
+     * <pre><code>{@literal <vmArgs>}
      *   {@literal <vmArg>}-Xmx8g{@literal </vmArg>}
      *   {@literal <vmArg>}-Dssl.debug=true{@literal </vmArg>}
-     * {@literal </vmArgs>}
-     * </code></pre>
+     * {@literal </vmArgs>}</code></pre>
      */
     @Parameter(property = "soatest.vmargs")
     private List<String> vmArgs;
@@ -90,12 +88,10 @@ public class SOAtestMojo extends AbstractMojo {
      * The locations of Eclipse projects to import into the workspace prior to
      * executing tests. Defaults to ${project.basedir}. Example:
      *
-     * <pre><code>
-     * {@literal <import>}
+     * <pre><code>{@literal <import>}
      *   {@literal <project>}${user.home}/projects/project1{@literal </project>}
      *   {@literal <project>}${user.home}/projects/project2{@literal </project>}
-     * {@literal </import>}
-     * </code></pre>
+     * {@literal </import>}</code></pre>
      */
     @Parameter(name = "import", property = "soatest.import")
     private List<File> toImport;
