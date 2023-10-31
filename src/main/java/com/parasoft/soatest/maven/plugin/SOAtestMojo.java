@@ -185,7 +185,7 @@ public class SOAtestMojo extends AbstractMojo {
     /**
      * Fails the build by returning a non-zero exit code if any violations are reported.
      */
-    @Parameter(property = "fail", defaultValue = "false")
+    @Parameter(property = "soatest.fail", defaultValue = "false")
     private boolean fail; // parasoft-suppress OPT.CTLV "injected"
 
     /**
