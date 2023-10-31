@@ -67,7 +67,7 @@
       <name>Apache-2.0</name>
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
-      <comments>&copy; Copyright 2023 Parasoft Corporation</comments>
+      <comments>&#169; Copyright 2023 Parasoft Corporation</comments>
     </license>
   </licenses>
 
