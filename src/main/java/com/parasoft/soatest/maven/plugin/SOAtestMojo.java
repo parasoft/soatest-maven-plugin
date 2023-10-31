@@ -172,6 +172,12 @@ public class SOAtestMojo extends AbstractMojo {
      */
     @Parameter(property = "soatest.datasourcerow")
     private String dataSourceRow;
+    
+    /**
+     * Fails the build by returning a non-zero exit code if any violations are reported.
+     */
+    @Parameter(property = "fail", defaultValue = "false")
+    private boolean fail; // parasoft-suppress OPT.CTLV "injected"
 
     /**
      * An absolute or relative path to the .properties file that includes
@@ -285,6 +291,7 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-dataGroupConfig", dataGroupConfig, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceRow", dataSourceRow, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
+        addOptionalCommand("-fail", fail, command); //$NON-NLS-1$
         runCommand(log, command);
     }
 
