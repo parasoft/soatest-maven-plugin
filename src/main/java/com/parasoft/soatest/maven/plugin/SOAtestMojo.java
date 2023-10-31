@@ -55,6 +55,25 @@ public class SOAtestMojo extends AbstractMojo {
     private File soatestHome;
 
     /**
+     * Specifies an alternative Java runtime for starting SOAtest.
+     */
+    @Parameter(property = "soatest.java.home")
+    private File javaHome;
+
+    /**
+     * Specifies additional JVM options. Example:
+     *
+     * <pre><code>
+     * {@literal <vmArgs>}
+     *   {@literal <vmArg>}-Xmx8g{@literal </vmArg>}
+     *   {@literal <vmArg>}-Dssl.debug=true{@literal </vmArg>}
+     * {@literal </vmArgs>}
+     * </code></pre>
+     */
+    @Parameter(property = "soatest.vmargs")
+    private List<String> vmArgs;
+
+    /**
      * Specifies the location of the Eclipse workspace to use for executing the
      * tests. Defaults to a temporary directory.
      */
@@ -70,6 +89,7 @@ public class SOAtestMojo extends AbstractMojo {
     /**
      * The locations of Eclipse projects to import into the workspace prior to
      * executing tests. Defaults to ${project.basedir}. Example:
+     *
      * <pre><code>
      * {@literal <import>}
      *   {@literal <project>}${user.home}/projects/project1{@literal </project>}
@@ -110,9 +130,10 @@ public class SOAtestMojo extends AbstractMojo {
                 throw new MojoExecutionException(e);
             }
         }
+        List<String> baseCommand = getBaseCommand(log, soatestcli, workspace);
         try {
-            runImport(log, soatestcli, workspace);
-            runTestConfig(log, soatestcli, workspace);
+            runImport(log, baseCommand);
+            runTestConfig(log, baseCommand);
         } finally {
             if (data == null) {
                 try (Stream<Path> stream = Files.walk(workspace)) {
@@ -124,15 +145,28 @@ public class SOAtestMojo extends AbstractMojo {
         }
     }
 
-    private void runImport(Log log, String soatestcli, Path workspace) throws MojoExecutionException {
+    private List<String> getBaseCommand(Log log, String soatestcli, Path workspace) {
+        List<String> baseCommand = new LinkedList<>();
+        baseCommand.add(soatestcli);
+        if (javaHome != null) {
+            baseCommand.add("-Zjava_home"); //$NON-NLS-1$
+            baseCommand.add(javaHome.getAbsolutePath());
+        }
+        if (vmArgs != null) {
+            for (String vmArg : vmArgs) {
+                baseCommand.add("-J" + vmArg); //$NON-NLS-1$
+            }
+        }
+        baseCommand.add("-data"); //$NON-NLS-1$
+        baseCommand.add(workspace.toAbsolutePath().toString());
+        return baseCommand;
+    }
+
+    private void runImport(Log log, List<String> baseCommand) throws MojoExecutionException {
         if (noImport) {
             log.debug("skipping import"); //$NON-NLS-1$
         } else {
             log.debug("importing projects"); //$NON-NLS-1$
-            List<String> baseCommand = new LinkedList<>();
-            baseCommand.add(soatestcli);
-            baseCommand.add("-data"); //$NON-NLS-1$
-            baseCommand.add(workspace.toAbsolutePath().toString());
             List<File> projectLocs = toImport != null && !toImport.isEmpty() ? toImport
                     : Collections.singletonList(project.getBasedir());
             for (File projectLoc : projectLocs) {
@@ -162,11 +196,8 @@ public class SOAtestMojo extends AbstractMojo {
         }
     }
 
-    private void runTestConfig(Log log, String soatestcli, Path workspace) throws MojoExecutionException {
-        List<String> command = new LinkedList<>();
-        command.add(soatestcli);
-        command.add("-data"); //$NON-NLS-1$
-        command.add(workspace.toAbsolutePath().toString());
+    private void runTestConfig(Log log, List<String> baseCommand) throws MojoExecutionException {
+        List<String> command = new LinkedList<>(baseCommand);
         command.add("-config"); //$NON-NLS-1$
         command.add(config);
         runCommand(log, command);
