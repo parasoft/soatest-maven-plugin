@@ -104,6 +104,14 @@ public class SOAtestMojo extends AbstractMojo {
     private String config;
 
     /**
+     * Specifies where to print the text that would be shown in the Console view in
+     * the UI. Use {@code stdout} to print to STDOUT. Otherwise, the value is
+     * interpreted as a file path.
+     */
+    @Parameter(property = "soatest.appconsole")
+    private String appconsole;
+
+    /**
      * Specifies the active data source within a data group. This parameter must
      * be set to the location of an XML file that specifies the active data
      * source for each data group within each .tst file contained in the test
@@ -234,6 +242,7 @@ public class SOAtestMojo extends AbstractMojo {
         List<String> command = new LinkedList<>(baseCommand);
         command.add("-config"); //$NON-NLS-1$
         command.add(config);
+        addOptionalCommand("-appconsole", appconsole, command); //$NON-NLS-1$
         addOptionalCommand("-dataGroupConfig", dataGroupConfig, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceRow", dataSourceRow, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
