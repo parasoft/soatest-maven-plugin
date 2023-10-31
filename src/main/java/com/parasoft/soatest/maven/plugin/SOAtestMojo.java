@@ -152,6 +152,15 @@ public class SOAtestMojo extends AbstractMojo {
     private String dataSourceName;
 
     /**
+     * Enables publishing reports to DTP Report Center. DTP 5.3.x or later is
+     * required.
+     *
+     * The connection to DTP is configured in the settings file.
+     */
+    @Parameter(property = "soatest.publish", defaultValue = "false")
+    private boolean publish; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
      * Runs all tests with the specified data source rows(s). You can specify a
      * list of row numbers or row ranges. The following values are examples of
      * valid values:
@@ -286,6 +295,7 @@ public class SOAtestMojo extends AbstractMojo {
         command.add(config);
         addOptionalCommand("-appconsole", appconsole, command); //$NON-NLS-1$
         addOptionalCommand("-nobuild", nobuild, command); //$NON-NLS-1$
+        addOptionalCommand("-publish", publish, command); //$NON-NLS-1$
         addOptionalCommand("-refresh", refresh, command); //$NON-NLS-1$
         addOptionalCommand("-showdetails", showdetails, command); //$NON-NLS-1$
         addOptionalCommand("-dataGroupConfig", dataGroupConfig, command); //$NON-NLS-1$
