@@ -57,7 +57,7 @@ public class SOAtestMojo extends AbstractMojo {
     /**
      * Specifies an alternative Java runtime for starting SOAtest.
      */
-    @Parameter(property = "soatest.java.home")
+    @Parameter(property = "soatest.javahome")
     private File javaHome;
 
     /**
