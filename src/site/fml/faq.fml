@@ -12,14 +12,12 @@
         <p>You will need to download and install Maven 3.9 directly from Apache.</p>
         <b>Remove the current version:</b>
         <pre>sudo apt-get purge maven</pre>
-        <br></br>
         <b>Download the latest version:</b>
-        <pre>wget https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz</pre>
-        <pre>tar -xvf apache-maven-3.9.5-bin.tar.gz</pre>
-        <br></br>
+        <pre>wget https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
+tar -xvf apache-maven-3.9.5-bin.tar.gz</pre>
         <b>Installation:</b>
-        <pre>sudo cp -r apache-maven-3.9.5 /opt</pre>
-        <pre>export PATH=/opt/apache-maven-3.9.5/bin:$PATH</pre>
+        <pre>sudo cp -r apache-maven-3.9.5 /opt
+export PATH=/opt/apache-maven-3.9.5/bin:$PATH</pre>
       </answer>
     </faq>
   </part>
