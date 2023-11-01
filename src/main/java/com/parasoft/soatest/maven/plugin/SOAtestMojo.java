@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -110,8 +112,8 @@ public class SOAtestMojo extends AbstractMojo {
     private String config;
 
     /**
-     * Specifies where to print the text that would be shown in the Console view in
-     * the UI. Use {@code stdout} to print to STDOUT. Otherwise, the value is
+     * Specifies where to print the text that would be shown in the Console view
+     * in the UI. Use {@code stdout} to print to STDOUT. Otherwise, the value is
      * interpreted as a file path.
      */
     @Parameter(property = "soatest.appconsole")
@@ -183,7 +185,8 @@ public class SOAtestMojo extends AbstractMojo {
     private String dataSourceRow;
 
     /**
-     * Fails the build by returning a non-zero exit code if any violations are reported.
+     * Fails the build by returning a non-zero exit code if any violations are
+     * reported.
      */
     @Parameter(property = "soatest.fail", defaultValue = "false")
     private boolean fail; // parasoft-suppress OPT.CTLV "injected"
@@ -197,17 +200,18 @@ public class SOAtestMojo extends AbstractMojo {
     private boolean showsettings; // parasoft-suppress OPT.CTLV "injected"
 
     /**
-     * An absolute or relative path to the .properties file that includes
-     * custom configuration settings.
+     * An absolute or relative path to the .properties file that includes custom
+     * configuration settings.
      */
     @Parameter(property = "soatest.settings")
     private File settings;
 
-     /**
-     * Filenames, paths to files, or patterns that matches filenames to be included during testing.
-     * The pattern matching syntax is similar to that of Ant file sets.
-     * You can also specify a list of patterns by adding them to a .lst file. Example:
-     * 
+    /**
+     * Filenames, paths to files, or patterns that matches filenames to be
+     * included during testing. The pattern matching syntax is similar to that
+     * of Ant file sets. You can also specify a list of patterns by adding them
+     * to a .lst file. Example:
+     *
      * <pre><code>{@literal <includes>}
      *   {@literal <include>}tests1/*.tst{@literal </include>}
      *   {@literal <include>**}/Test2.tst{@literal </include>}
@@ -217,10 +221,11 @@ public class SOAtestMojo extends AbstractMojo {
     private List<String> includes;
 
     /**
-     * Filenames, paths to files, or patterns that matches filenames to be excluded during testing.
-     * The pattern matching syntax is similar to that of Ant file sets.
-     * You can also specify a list of patterns by adding them to a .lst file. Example:
-     * 
+     * Filenames, paths to files, or patterns that matches filenames to be
+     * excluded during testing. The pattern matching syntax is similar to that
+     * of Ant file sets. You can also specify a list of patterns by adding them
+     * to a .lst file. Example:
+     *
      * <pre><code>{@literal <excludes>}
      *   {@literal <exclude>}tests1/*.tst{@literal </exclude>}
      *   {@literal <exclude>**}/Test2.tst{@literal </exclude>}
@@ -228,6 +233,28 @@ public class SOAtestMojo extends AbstractMojo {
      */
     @Parameter(name = "excludes", property = "soatest.excludes")
     private List<String> excludes;
+
+    /**
+     * Allows you to configure a single setting directly. Use the following
+     * format:
+     *
+     * <pre><code>{@literal <properties>}
+     *   {@literal <key>}value{@literal </key>}
+     * {@literal </properties>}</code></pre>
+     *
+     * You can use this option multiple times to configure several settings.
+     * Earlier entries with the same key will be overwritten. Additionally,
+     * settings passed with this option will overwrite those with the same key
+     * that are specified using the {@code soatest.settings} parameter,
+     * regardless of their order. Example:
+     *
+     * <pre><code>{@literal <properties>}
+     *   {@literal <report.dtp.publish>}true{@literal </report.dtp.publish>}
+     *   {@literal <techsupport.auto_creation>}true{@literal </techsupport.auto_creation>}
+     * {@literal </properties>}</code></pre>
+     */
+    @Parameter(name = "properties", property = "soatest.properties")
+    private Map<String, String> properties;
 
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
@@ -294,8 +321,8 @@ public class SOAtestMojo extends AbstractMojo {
             log.debug("skipping import"); //$NON-NLS-1$
         } else {
             log.debug("importing projects"); //$NON-NLS-1$
-            List<File> projectLocs = toImport != null && !toImport.isEmpty() ? toImport
-                    : Collections.singletonList(project.getBasedir());
+            List<File> projectLocs = toImport != null && !toImport.isEmpty() ? toImport :
+                    Collections.singletonList(project.getBasedir());
             for (File projectLoc : projectLocs) {
                 if (!projectLoc.exists()) {
                     throw new MojoExecutionException(Messages.get("invalid.project.exists", projectLoc)); //$NON-NLS-1$
@@ -349,6 +376,11 @@ public class SOAtestMojo extends AbstractMojo {
                 command.add(exclude);
             }
         }
+        if (properties != null) {
+            for (Entry<String, String> entry : properties.entrySet()) {
+                addOptionalCommand("-property", entry.getKey() + '=' + entry.getValue(), command); //$NON-NLS-1$
+            }
+        }
         runCommand(log, command);
     }
 
@@ -374,7 +406,7 @@ public class SOAtestMojo extends AbstractMojo {
 
     private static void runCommand(Log log, List<String> command) throws MojoExecutionException {
         if (log.isDebugEnabled()) {
-            log.debug("command:" +  lineSeparator() + String.join(lineSeparator(), command)); //$NON-NLS-1$
+            log.debug("command:" + lineSeparator() + String.join(lineSeparator(), command)); //$NON-NLS-1$
         }
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.inheritIO();

@@ -18,6 +18,11 @@
         <configuration>
             <soatestHome>parasoft/soatest</soatestHome>
             <settings>${project.basedir}/settings.properties</settings>
+            <fail>true</fail>
+            <showsettings>true</showsettings>
+            <properties>
+              <techsupport.auto_creation>true</techsupport.auto_creation>
+            </properties>
         </configuration>
       </plugin>
     </plugins>
