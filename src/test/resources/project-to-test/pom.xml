@@ -35,6 +35,10 @@
             <resources>
               <resource>testProject</resource>
             </resources>
+            <workItems>
+              <workItem>TEST-7140</workItem>
+              <workItem>TEST-16447</workItem>
+            </workItems>
         </configuration>
       </plugin>
     </plugins>

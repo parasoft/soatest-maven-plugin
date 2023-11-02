@@ -81,7 +81,7 @@ public class SOAtestMojoTest {
         assertEquals(new File(pom, "settings.properties").getAbsolutePath(), importCommand.get(4));
         assertEquals("-import", importCommand.get(5));
         assertEquals(pom.getAbsolutePath(), importCommand.get(6));
-        assertEquals(28, testConfigCommand.size());
+        assertEquals(30, testConfigCommand.size());
         assertThat(testConfigCommand.subList(0, 5), contains(importCommand.subList(0, 5).toArray()));
         assertThat(testConfigCommand.subList(5, testConfigCommand.size()), contains(
                 "-config", "soatest.builtin://Demo Configuration",
@@ -96,7 +96,8 @@ public class SOAtestMojoTest {
                 "-prefs", "prefs.properties",
                 "-report", new File(pom, "myreport.xml").getAbsolutePath(),
                 "-resource", "testProject",
-                "-property", "techsupport.auto_creation=true"
+                "-property", "techsupport.auto_creation=true",
+                "-workItems", "TEST-7140,TEST-16447"
                 ));
     }
 

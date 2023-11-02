@@ -487,6 +487,18 @@ public class SOAtestMojo extends AbstractMojo {
     @Parameter(name = "resources", property = "soatest.resources")
     private List<String> resources;
 
+    /**
+     * Limit the test scope to the resources that are associated with specifc
+     * work items. Specify a list of work item IDs.  Example:
+     *
+     * <pre><code>{@literal <workItems>}
+     *   {@literal <workItem>}TEST-7140{@literal </workItem>}
+     *   {@literal <workItem>}TEST-16447{@literal </workItem>}
+     * {@literal </workItems>}</code></pre>
+     */
+    @Parameter(name = "workItems", property = "soatest.workitems")
+    private List<String> workItems;
+
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
     }
@@ -603,6 +615,9 @@ public class SOAtestMojo extends AbstractMojo {
             for (Entry<String, String> entry : properties.entrySet()) {
                 addOptionalCommand("-property", entry.getKey() + '=' + entry.getValue(), command); //$NON-NLS-1$
             }
+        }
+        if (workItems != null) {
+            addOptionalCommand("-workItems", String.join(",", workItems), command); //$NON-NLS-1$
         }
         runCommand(log, command);
     }
