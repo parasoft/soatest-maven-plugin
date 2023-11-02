@@ -144,7 +144,7 @@ public class SOAtestMojo extends AbstractMojo {
      * run.
      */
     @Parameter(property = "soatest.datagroupconfig")
-    private String dataGroupConfig;
+    private File dataGroupConfig;
 
     /**
      * Specifies the name of the data source associated with the test(s) you
@@ -334,8 +334,8 @@ public class SOAtestMojo extends AbstractMojo {
     private File report;
 
     /**
-     * An absolute or relative path to the .properties file that includes custom
-     * configuration settings.
+     * Specifies the path to the .properties file that includes custom configuration
+     * settings.
      */
     @Parameter(property = "soatest.settings")
     private File settings;
@@ -512,10 +512,7 @@ public class SOAtestMojo extends AbstractMojo {
     private List<String> getBaseCommand(Log log, String soatestcli, Path workspace) {
         List<String> baseCommand = new LinkedList<>();
         baseCommand.add(soatestcli);
-        if (javaHome != null) {
-            baseCommand.add("-Zjava_home"); //$NON-NLS-1$
-            baseCommand.add(javaHome.getAbsolutePath());
-        }
+        addOptionalCommand("-Zjava_home", javaHome, baseCommand); //$NON-NLS-1$
         if (vmArgs != null) {
             for (String vmArg : vmArgs) {
                 baseCommand.add("-J" + vmArg); //$NON-NLS-1$
@@ -613,8 +610,7 @@ public class SOAtestMojo extends AbstractMojo {
     private static void addOptionalCommand(String name, List<String> parameters, List<String> command) {
         if (parameters != null) {
             for (String parameter : parameters) {
-                command.add(name);
-                command.add(parameter);
+                addOptionalCommand(name, parameter, command);
             }
         }
     }

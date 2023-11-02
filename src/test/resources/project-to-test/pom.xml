@@ -17,6 +17,7 @@
         <artifactId>soatest-maven-plugin</artifactId>
         <configuration>
             <soatestHome>parasoft/soatest</soatestHome>
+            <config>soatest.builtin://Demo Configuration</config>
             <settings>${project.basedir}/settings.properties</settings>
             <dataGroupConfig>dataconfig.xml</dataGroupConfig>
             <dataSourceName>data source name</dataSourceName>
