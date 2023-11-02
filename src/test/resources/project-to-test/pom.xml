@@ -18,11 +18,17 @@
         <configuration>
             <soatestHome>parasoft/soatest</soatestHome>
             <settings>${project.basedir}/settings.properties</settings>
+            <dataGroupConfig>dataconfig.xml</dataGroupConfig>
+            <dataSourceName>data source name</dataSourceName>
+            <dataSourceRow>1</dataSourceRow>
             <fail>true</fail>
             <showsettings>true</showsettings>
             <properties>
               <techsupport.auto_creation>true</techsupport.auto_creation>
             </properties>
+            <prefs>prefs.properties</prefs>
+            <publish>true</publish>
+            <report>myreport.xml</report>
         </configuration>
       </plugin>
     </plugins>

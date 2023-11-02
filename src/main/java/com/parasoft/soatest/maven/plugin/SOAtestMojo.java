@@ -169,7 +169,7 @@ public class SOAtestMojo extends AbstractMojo {
      * rows to be used, even if the data sources were saved to use only specific
      * rows.
      *
-     * You can use the dataSourceName option to specify which data source
+     * You can use the dataSourceName parameter to specify which data source
      * contains the row associated with the tests you want to execute.
      */
     @Parameter(property = "soatest.datasourcerow")
@@ -222,8 +222,7 @@ public class SOAtestMojo extends AbstractMojo {
      * variables by using the $(VAR) notation. These variables will be replaced
      * with the corresponding Java properties, which can be set at runtime by
      * running {@code soatestcli} with -J-D options (for example
-     * {@code soatestcli
-     * -J-DHOME=/home/user}).
+     * {@code soatestcli -J-DHOME=/home/user}).
      * </p>
      *
      * Examples:
@@ -243,6 +242,46 @@ public class SOAtestMojo extends AbstractMojo {
      */
     @Parameter(property = "soatest.publish", defaultValue = "false")
     private boolean publish; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
+     * <p>
+     * Generates a report and saves it with the name and path specified. The
+     * report includes an XML file containing the report data, as well as HTML
+     * file for presenting the data. You can also configure SOAtest to generate
+     * a report in PDF or custom formats by specifying them in the report.format
+     * option. The option is specified in the settings file (see
+     * {@code settings}). If a path is not included as part the specified
+     * value, the report will be generated in the execution directory.
+     * </p>
+     * <p>
+     * All of the following parameters will produce an HTML report
+     * <em>filename.html</em> and an XML report <em>filename.xml</em>.
+     * </p>
+     * <ul>
+     * <li>{@code <report>filename.xml</report>}</li>
+     * <li>{@code <report>filename.htm</report>}</li>
+     * <li>{@code <report>filename.html</report>}</li>
+     * </ul>
+     * <p>
+     * If the specified path ends with an ".html"/".htm"/".xml" extension, it
+     * will be treated as a path to the report file to generate. Otherwise, it
+     * will be treated as a path to a directory where reports should be
+     * generated.
+     * </p>
+     * <p>
+     * If the file name is explicitly specified in the parameter and a file with
+     * this name already exists in the specified location, the previous report
+     * will be overwritten. If your parameter doesn’t explicitly specify a file
+     * name, the existing report file will not be overwritten; the new file will
+     * be named repXXXX.html, where XXXX is a random number.
+     * </p>
+     * <p>
+     * If the {@code report} parameter is not specified, reports will be generated
+     * with the default names "report.xml"/"html" in the current directory.
+     * </p>
+     */
+    @Parameter(property = "soatest.report")
+    private File report;
 
     /**
      * An absolute or relative path to the .properties file that includes custom
@@ -287,10 +326,10 @@ public class SOAtestMojo extends AbstractMojo {
      *   {@literal <key>}value{@literal </key>}
      * {@literal </properties>}</code></pre>
      *
-     * You can use this option multiple times to configure several settings.
+     * You can use this parameter multiple times to configure several settings.
      * Earlier entries with the same key will be overwritten. Additionally,
-     * settings passed with this option will overwrite those with the same key
-     * that are specified using the {@code soatest.settings} parameter,
+     * settings passed with this parameter will overwrite those with the same
+     * key that are specified using the {@code soatest.settings} parameter,
      * regardless of their order. Example:
      *
      * <pre><code>{@literal <properties>}
@@ -410,6 +449,7 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-fail", fail, command); //$NON-NLS-1$
         addOptionalCommand("-showsettings", showsettings, command); //$NON-NLS-1$
         addOptionalCommand("-prefs", prefs, command); //$NON-NLS-1$
+        addOptionalCommand("-report", report, command); //$NON-NLS-1$
         if (includes != null) {
             for (String include : includes) {
                 command.add("-include"); //$NON-NLS-1$
