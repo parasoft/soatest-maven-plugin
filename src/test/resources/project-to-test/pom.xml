@@ -23,6 +23,9 @@
             <dataSourceRow>1</dataSourceRow>
             <fail>true</fail>
             <showsettings>true</showsettings>
+            <properties>
+              <techsupport.auto_creation>true</techsupport.auto_creation>
+            </properties>
             <prefs>prefs.properties</prefs>
             <publish>true</publish>
             <report>myreport.xml</report>
