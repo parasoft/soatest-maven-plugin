@@ -29,8 +29,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -318,28 +316,6 @@ public class SOAtestMojo extends AbstractMojo {
     @Parameter(name = "excludes", property = "soatest.excludes")
     private List<String> excludes;
 
-    /**
-     * Allows you to configure a single setting directly. Use the following
-     * format:
-     *
-     * <pre><code>{@literal <properties>}
-     *   {@literal <key>}value{@literal </key>}
-     * {@literal </properties>}</code></pre>
-     *
-     * You can use this parameter multiple times to configure several settings.
-     * Earlier entries with the same key will be overwritten. Additionally,
-     * settings passed with this parameter will overwrite those with the same
-     * key that are specified using the {@code soatest.settings} parameter,
-     * regardless of their order. Example:
-     *
-     * <pre><code>{@literal <properties>}
-     *   {@literal <report.dtp.publish>}true{@literal </report.dtp.publish>}
-     *   {@literal <techsupport.auto_creation>}true{@literal </techsupport.auto_creation>}
-     * {@literal </properties>}</code></pre>
-     */
-    @Parameter(name = "properties", property = "soatest.properties")
-    private Map<String, String> properties;
-
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
     }
@@ -460,11 +436,6 @@ public class SOAtestMojo extends AbstractMojo {
             for (String exclude : excludes) {
                 command.add("-exclude"); //$NON-NLS-1$
                 command.add(exclude);
-            }
-        }
-        if (properties != null) {
-            for (Entry<String, String> entry : properties.entrySet()) {
-                addOptionalCommand("-property", entry.getKey() + '=' + entry.getValue(), command); //$NON-NLS-1$
             }
         }
         runCommand(log, command);
