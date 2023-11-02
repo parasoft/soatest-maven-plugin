@@ -31,6 +31,9 @@
             <prefs>prefs.properties</prefs>
             <publish>true</publish>
             <report>myreport.xml</report>
+            <resources>
+              <resource>testProject</resource>
+            </resources>
         </configuration>
       </plugin>
     </plugins>

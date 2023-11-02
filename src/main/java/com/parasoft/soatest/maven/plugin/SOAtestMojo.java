@@ -299,8 +299,8 @@ public class SOAtestMojo extends AbstractMojo {
      * file for presenting the data. You can also configure SOAtest to generate
      * a report in PDF or custom formats by specifying them in the report.format
      * option. The option is specified in the settings file (see
-     * {@code settings}). If a path is not included as part the specified
-     * value, the report will be generated in the execution directory.
+     * {@code settings}). If a path is not included as part the specified value,
+     * the report will be generated in the execution directory.
      * </p>
      * <p>
      * All of the following parameters will produce an HTML report
@@ -325,8 +325,9 @@ public class SOAtestMojo extends AbstractMojo {
      * be named repXXXX.html, where XXXX is a random number.
      * </p>
      * <p>
-     * If the {@code report} parameter is not specified, reports will be generated
-     * with the default names "report.xml"/"html" in the current directory.
+     * If the {@code report} parameter is not specified, reports will be
+     * generated with the default names "report.xml"/"html" in the current
+     * directory.
      * </p>
      */
     @Parameter(property = "soatest.report")
@@ -388,6 +389,83 @@ public class SOAtestMojo extends AbstractMojo {
      */
     @Parameter(name = "properties")
     private Map<String, String> properties;
+
+    /**
+     * <p>
+     * Specifies the path to the test suite(s) to run. To run a single test
+     * suite, specify the path to the <em>.tst</em> relative to the workspace. To
+     * run all test suites within a directory, specify the directory path
+     * relative to the workspace. Use multiple {@code resource} parameters to
+     * specify multiple resources. All paths, including absolute paths, are
+     * relative to the workspace specified by the {@code soatest.data}
+     * parameter.
+     * </p>
+     * <p>
+     * You can specify the following types of resources: <br/>
+     * <p/>
+     * <table>
+     * <tr>
+     * <th style="text-align:left"><em>.tst</em> file</th>
+     * <td>Specify the path to a <em>.tst</em> file to execute all tests
+     * contained</td>
+     * </tr>
+     * <tr>
+     * <th style="text-align:left">directory</th>
+     * <td>Specify the path to a directory in the workspace to execute all test
+     * suites in the directory.</td>
+     * </tr>
+     * <tr>
+     * <th style="text-align:left"><em>.properties</em> file</th>
+     * <td>Specify the path to a <em>.properties</em> file and the value
+     * configured for the {@code com.parasoft.xtest.checkers.resources} property
+     * in the file will be interpreted as a colon-separated list of resources.
+     * Only one <em>.properties</em> file can be specified in this way.</td>
+     * </tr>
+     * <tr>
+     * <th style="text-align:left"><em>.lst</em> file</th>
+     * <td>Specify the path to a <em>.lst</em> file and each line in the file
+     * will be treated as a resource. If no resources are specified on the
+     * command line, the complete workspace will be tested.</td>
+     * </tr>
+     * <tr>
+     * <th style="text-align:left">Team Project Set File (PSF)</th>
+     * <td>PSFs are supported for SVN and other source systems, depending on the
+     * Eclipse plug-in capabilities installed.</td>
+     * </tr>
+     * </table>
+     * <p>
+     * Examples:
+     * </p>
+     *
+     * <pre><code>{@literal <resources>}
+     *   {@literal <resource>}Acme Project{@literal </resource>}
+     *   {@literal <resource>}/MyProject/tests/acme{@literal </resource>}
+     *   {@literal <resource>}testedprojects.properties{@literal </resource>}
+     * {@literal </resources>}</code></pre>
+     * <p>
+     * If you are specifying multiple tests from different projects, tests will
+     * be grouped project-by-project, in the order specified in the multiple
+     * {@code resource} parameters or in the <em>.lst</em> file.
+     * </p>
+     * <p>
+     * All tests in the same project as the first resource will be run before
+     * any tests in a different project. If you specify resources in the order
+     * the following order, for example: <br/>
+     * <p/>
+     * <p>
+     * {@code /ProjectA/A.tst, /ProjectB/B.tst, /ProjectA/C.tst} <br/>
+     * </p>
+     * <p>
+     * they will be executed in the following order:
+     * </p>
+     * <ol>
+     * <li>{@code /ProjectA/A.tst}</li>
+     * <li>{@code /ProjectA/C.tst}</li>
+     * <li>{@code /ProjectB/B.tst}</li>
+     * </ol>
+     */
+    @Parameter(name = "resources", property = "soatest.resources")
+    private List<String> resources;
 
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
@@ -501,18 +579,9 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-showsettings", showsettings, command); //$NON-NLS-1$
         addOptionalCommand("-prefs", prefs, command); //$NON-NLS-1$
         addOptionalCommand("-report", report, command); //$NON-NLS-1$
-        if (includes != null) {
-            for (String include : includes) {
-                command.add("-include"); //$NON-NLS-1$
-                command.add(include);
-            }
-        }
-        if (excludes != null) {
-            for (String exclude : excludes) {
-                command.add("-exclude"); //$NON-NLS-1$
-                command.add(exclude);
-            }
-        }
+        addOptionalCommand("-include", includes, command); //$NON-NLS-1$
+        addOptionalCommand("-exclude", excludes, command); //$NON-NLS-1$
+        addOptionalCommand("-resource", resources, command); //$NON-NLS-1$
         if (properties != null) {
             for (Entry<String, String> entry : properties.entrySet()) {
                 addOptionalCommand("-property", entry.getKey() + '=' + entry.getValue(), command); //$NON-NLS-1$
@@ -527,6 +596,13 @@ public class SOAtestMojo extends AbstractMojo {
         }
     }
 
+    private static void addOptionalCommand(String name, String value, List<String> command) {
+        if (value != null && !value.trim().isEmpty()) {
+            command.add(name);
+            command.add(value);
+        }
+    }
+
     private static void addOptionalCommand(String name, File value, List<String> command) {
         if (value != null) {
             command.add(name);
@@ -534,10 +610,12 @@ public class SOAtestMojo extends AbstractMojo {
         }
     }
 
-    private static void addOptionalCommand(String name, String value, List<String> command) {
-        if (value != null && !value.trim().isEmpty()) {
-            command.add(name);
-            command.add(value);
+    private static void addOptionalCommand(String name, List<String> parameters, List<String> command) {
+        if (parameters != null) {
+            for (String parameter : parameters) {
+                command.add(name);
+                command.add(parameter);
+            }
         }
     }
 
