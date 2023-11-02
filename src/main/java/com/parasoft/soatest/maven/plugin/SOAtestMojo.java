@@ -154,15 +154,6 @@ public class SOAtestMojo extends AbstractMojo {
     private String dataSourceName;
 
     /**
-     * Enables publishing reports to DTP Report Center. DTP 5.3.x or later is
-     * required.
-     *
-     * The connection to DTP is configured in the settings file.
-     */
-    @Parameter(property = "soatest.publish", defaultValue = "false")
-    private boolean publish; // parasoft-suppress OPT.CTLV "injected"
-
-    /**
      * Runs all tests with the specified data source rows(s). You can specify a
      * list of row numbers or row ranges. The following values are examples of
      * valid values:
@@ -198,6 +189,60 @@ public class SOAtestMojo extends AbstractMojo {
      */
     @Parameter(property = "soatest.showsettings", defaultValue = "false")
     private boolean showsettings; // parasoft-suppress OPT.CTLV "injected"
+
+    /**
+     * <p>
+     * Specifies an Eclipse workspace preferences file to import. The specified
+     * value is interpreted as a URL or the path to a local Eclipse workspace
+     * preferences file. The best way to create a workspace preferences file is
+     * to use the Export wizard. To do this:
+     * </p>
+     *
+     * <ol>
+     * <li>Go to <strong>File > Export.</strong></li>
+     * <li>In the Export Wizard, choose <strong>Preferences</strong> and click
+     * <strong>Next.</strong></li>
+     * <li>Do one of the following:
+     * <ul>
+     * <li>To add all of the preferences to the file, choose <strong>Export
+     * all.</strong></li>
+     * <li>To add only specified preferences to the file, choose <strong>Choose
+     * specific preferences to export</strong> and enable the preferences you
+     * want to import.</li>
+     * </ul>
+     * <li>Click <strong>Browse...</strong> and indicate where you want the
+     * preferences file saved.</li>
+     * <li>Click <strong>Finish</strong>.</li>
+     * </ol>
+     *
+     * <p>
+     * We recommend deleting properties that are not applicable to SOAtest and
+     * keeping only critical properties, such as the {@code classpath} property.
+     * We also recommend that you replace machine/user-specific locations with
+     * variables by using the $(VAR) notation. These variables will be replaced
+     * with the corresponding Java properties, which can be set at runtime by
+     * running {@code soatestcli} with -J-D options (for example
+     * {@code soatestcli
+     * -J-DHOME=/home/user}).
+     * </p>
+     *
+     * Examples:
+     * <ul>
+     * <li>{@code -prefs "http://intranet.acme.com/SOAtest/workspace.properties"}</li>
+     * <li>{@code -prefs "workspace.properties"}</li>
+     * </ul>
+     */
+    @Parameter(property = "soatest.prefs")
+    private String prefs;
+
+    /**
+     * Enables publishing reports to DTP Report Center. DTP 5.3.x or later is
+     * required.
+     *
+     * The connection to DTP is configured in the settings file.
+     */
+    @Parameter(property = "soatest.publish", defaultValue = "false")
+    private boolean publish; // parasoft-suppress OPT.CTLV "injected"
 
     /**
      * An absolute or relative path to the .properties file that includes custom
@@ -364,6 +409,7 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
         addOptionalCommand("-fail", fail, command); //$NON-NLS-1$
         addOptionalCommand("-showsettings", showsettings, command); //$NON-NLS-1$
+        addOptionalCommand("-prefs", prefs, command); //$NON-NLS-1$
         if (includes != null) {
             for (String include : includes) {
                 command.add("-include"); //$NON-NLS-1$
