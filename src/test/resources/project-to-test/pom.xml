@@ -21,6 +21,8 @@
             <dataGroupConfig>dataconfig.xml</dataGroupConfig>
             <dataSourceName>data source name</dataSourceName>
             <dataSourceRow>1</dataSourceRow>
+            <environment>test environment</environment>
+            <environmentConfig>environments.xml</environmentConfig>
             <fail>true</fail>
             <showsettings>true</showsettings>
             <properties>

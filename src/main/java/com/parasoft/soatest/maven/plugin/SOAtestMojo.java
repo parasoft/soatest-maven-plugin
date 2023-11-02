@@ -176,6 +176,55 @@ public class SOAtestMojo extends AbstractMojo {
     private String dataSourceRow;
 
     /**
+     * <p>
+     * Specifies the name of the SOAtest environment to use for executing the
+     * tests. An environment in SOAtest is a set of variables that define
+     * endpoints and other test-specific inputs. SOAtest environments should not
+     * be confused with environment entities as described in Virtualize and
+     * Continuous Testing Platform.
+     * </p>
+     * <p>
+     * When running functional tests from the command line, you can override the
+     * active environment specified in a project with one specified from the
+     * parameters. Note that if the specified environment is not found in the
+     * project, the default active environment will be used instead.
+     * </p>
+     */
+    @Parameter(property = "soatest.environment")
+    private String environment;
+
+    /**
+     * <p>
+     * Specifies the active environment variables. This parameter must be set to
+     * the location of an XML file that specifies the environment variable
+     * values to use for each .tst file contained in the test run. The XML file
+     * must use the following format:
+     * </p>
+     * <pre><code>{@literal <tests>}
+     * {@literal   <test> <!--1 or more-->}
+     * {@literal     <workspacePath></workspacePath>}
+     * {@literal     <Environment>}
+     * {@literal       <Variable> <!--1 or more-->}
+     * {@literal         <Name></Name>}
+     * {@literal         <Value></Value>}
+     * {@literal       </Variable>}
+     * {@literal     </Environment>}
+     * {@literal   </test>}
+     * {@literal </tests>}</pre></code>
+     * <p>
+     * The {@code <workspacePath>} element for {@code datagroupConfig} and
+     * {@code environmentConfig} should contain the path to the resource (for
+     * example, .tst) in the workspace, not the path on the file system.
+     * </p>
+     * <p>
+     * You can right-click the .tst file in the SOAtest UI and choose Properties
+     * to get the correct path to the resource.
+     * </p>
+     */
+    @Parameter(property = "soatest.environmentconfig")
+    private File environmentConfig;
+
+    /**
      * Fails the build by returning a non-zero exit code if any violations are
      * reported.
      */
@@ -447,6 +496,8 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-dataSourceRow", dataSourceRow, command); //$NON-NLS-1$
         addOptionalCommand("-dataSourceName", dataSourceName, command); //$NON-NLS-1$
         addOptionalCommand("-fail", fail, command); //$NON-NLS-1$
+        addOptionalCommand("-environment", environment, command); //$NON-NLS-1$
+        addOptionalCommand("-environmentConfig", environmentConfig, command); //$NON-NLS-1$
         addOptionalCommand("-showsettings", showsettings, command); //$NON-NLS-1$
         addOptionalCommand("-prefs", prefs, command); //$NON-NLS-1$
         addOptionalCommand("-report", report, command); //$NON-NLS-1$
