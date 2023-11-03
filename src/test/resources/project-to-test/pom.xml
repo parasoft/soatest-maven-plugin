@@ -46,6 +46,7 @@
             <excludes>
               <exclude>**/ExcludedTest.tst</exclude>
             </excludes>
+            <impactedTests>impacted/tests/path</impactedTests>
         </configuration>
       </plugin>
     </plugins>

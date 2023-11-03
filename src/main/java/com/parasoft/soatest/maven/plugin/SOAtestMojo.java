@@ -497,6 +497,13 @@ public class SOAtestMojo extends AbstractMojo {
     @Parameter(property = "soatest.test")
     private String test;
 
+    /**
+     * Runs tests impacted by change. Parameter value specifies a path to the
+     * baseline coverage report.
+     */
+    @Parameter(property = "soatest.impactedtests")
+    private File impactedTests;
+
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
     }
@@ -610,6 +617,7 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-include", test, command); //$NON-NLS-1$
         addOptionalCommand("-exclude", excludes, command); //$NON-NLS-1$
         addOptionalCommand("-resource", resources, command); //$NON-NLS-1$
+        addOptionalCommand("-impactedTests", impactedTests, command); //$NON-NLS-1$
         if (properties != null) {
             for (Entry<String, String> entry : properties.entrySet()) {
                 addOptionalCommand("-property", entry.getKey() + '=' + entry.getValue(), command); //$NON-NLS-1$
