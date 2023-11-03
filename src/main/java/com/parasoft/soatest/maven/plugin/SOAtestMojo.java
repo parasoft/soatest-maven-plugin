@@ -490,6 +490,13 @@ public class SOAtestMojo extends AbstractMojo {
     @Parameter(name = "workItems", property = "soatest.workitems")
     private List<String> workItems;
 
+    /**
+     * Specifies a .tst file name, path or pattern to be executed during testing.
+     * This pattern is added to the includes list, which is useful for debugging tests.
+     */
+    @Parameter(property = "soatest.test")
+    private String test;
+
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
     }
@@ -600,6 +607,7 @@ public class SOAtestMojo extends AbstractMojo {
         addOptionalCommand("-prefs", prefs, command); //$NON-NLS-1$
         addOptionalCommand("-report", report, command); //$NON-NLS-1$
         addOptionalCommand("-include", includes, command); //$NON-NLS-1$
+        addOptionalCommand("-include", test, command); //$NON-NLS-1$
         addOptionalCommand("-exclude", excludes, command); //$NON-NLS-1$
         addOptionalCommand("-resource", resources, command); //$NON-NLS-1$
         if (properties != null) {

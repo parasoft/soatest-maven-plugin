@@ -39,6 +39,13 @@
               <workItem>TEST-7140</workItem>
               <workItem>TEST-16447</workItem>
             </workItems>
+            <test>Bookstore.tst</test>
+            <includes>
+              <include>**/IncludedTest.tst</include>
+            </includes>
+            <excludes>
+              <exclude>**/ExcludedTest.tst</exclude>
+            </excludes>
         </configuration>
       </plugin>
     </plugins>
