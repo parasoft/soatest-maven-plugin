@@ -488,13 +488,13 @@ public class SOAtestMojo extends AbstractMojo {
     private List<String> resources;
 
     /**
-     * Limit the test scope to the resources that are associated with specifc
+     * Limit the test scope to the resources that are associated with specific
      * work items. Specify a list of work item IDs.  Example:
      *
-     * <pre><code>{@literal <workItems>}
-     *   {@literal <workItem>}TEST-7140{@literal </workItem>}
-     *   {@literal <workItem>}TEST-16447{@literal </workItem>}
-     * {@literal </workItems>}</code></pre>
+     * <pre><code>{@literal <workItems>
+     *   <workItem>TEST-7140</workItem>
+     *   <workItem>TEST-16447</workItem>
+     * </workItems>}</code></pre>
      */
     @Parameter(name = "workItems", property = "soatest.workitems")
     private List<String> workItems;
