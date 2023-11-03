@@ -389,18 +389,9 @@ public class SOAtestMojo extends AbstractMojo {
     private List<String> excludes;
 
     /**
-     * Allows you to configure a single setting directly. Use the following
-     * format:
-     *
-     * <pre><code>{@literal <properties>}
-     *   {@literal <key>}value{@literal </key>}
-     * {@literal </properties>}</code></pre>
-     *
-     * You can use this parameter multiple times to configure several settings.
-     * Earlier entries with the same key will be overwritten. Additionally,
-     * settings passed with this parameter will overwrite those with the same
-     * key that are specified using the {@code soatest.settings} parameter,
-     * regardless of their order. Example:
+     * Allows you to configure settings directly. Settings passed with this
+     * parameter will overwrite those with the same key that are specified using the
+     * {@code soatest.settings} parameter. Example:
      *
      * <pre><code>{@literal <properties>}
      *   {@literal <report.dtp.publish>}true{@literal </report.dtp.publish>}
