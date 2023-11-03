@@ -404,8 +404,8 @@ public class SOAtestMojo extends AbstractMojo {
     /**
      * <p>
      * Specifies the path to the test suite(s) to run. To run a single test
-     * suite, specify the path to the <em>.tst</em> relative to the workspace. To
-     * run all test suites within a directory, specify the directory path
+     * suite, specify the path to the <em>.tst</em> relative to the workspace.
+     * To run all test suites within a directory, specify the directory path
      * relative to the workspace. Use multiple {@code resource} parameters to
      * specify multiple resources. All paths, including absolute paths, are
      * relative to the workspace specified by the {@code soatest.data}
@@ -503,6 +503,66 @@ public class SOAtestMojo extends AbstractMojo {
      */
     @Parameter(property = "soatest.impactedtests")
     private File impactedTests;
+
+    /**
+     * <p>
+     * Specifies a {@code testName} parameter that matches the name of a test to
+     * run. SOAtest searches for tests in the resource that contain the string
+     * specified, but programmatic pattern matching, such as wildcards or regex,
+     * is not performed.
+     * </p>
+     * <p>
+     * In the following example, a test or test suite named WSDL Tests will run:
+     * </p>
+     *
+     * <pre><code>{@literal <testFilters>}
+     *   {@literal <testFilter>}
+     *      {@literal <testName>}WSDL Tests{@literal </testName>}
+     *   {@literal </testFilter>}
+     * {@literal </testFilters>}</code></pre>
+     * <p>
+     * You can use more than one {@code testFilter} parameter to specify multiple
+     * tests: Use the {@code substringMatch} optional parameter to search for
+     * tests containing a specific string. In the following example, any tests
+     * that contain the string MyTest will run:
+     * </p>
+     *
+     * <pre><code>{@literal <testFilters>}
+     *   {@literal <testFilter>}
+     *      {@literal <testName>}MyTest{@literal </testName>}
+     *      {@literal <substringMatch>}true{@literal </substringMatch>}
+     *   {@literal </testFilter>}
+     *   {@literal <testFilter>}
+     *      {@literal ...}
+     *   {@literal </testFilter>}
+     * {@literal </testFilters>}</code></pre>
+     * <p>
+     * If the test uses data from a data source, you can use the
+     * {@code dataSourceRow} and {@code dataSourceName} optional parameter to
+     * limit the range of data rows used to execute the test. for example:
+     * </p>
+     *
+     * <pre><code>{@literal <testFilters>}
+     *   {@literal <testFilter>}
+     *      {@literal <testName>}MyTest{@literal </testName>}
+     *      {@literal <substringMatch>}true{@literal </substringMatch>}
+     *      {@literal <dataSourceName>}MyData{@literal </dataSourceName>}
+     *      {@literal <dataSourceRow>}1{@literal </dataSourceRow>}
+     *   {@literal </testFilter>}
+     * {@literal </testFilters>}</code></pre>
+     * <p>
+     * The value for the {@code dataSourceRow} parameter can be specified as a
+     * single row. The following values are examples of valid values:
+     * </p>
+     * <ul>
+     * <li>{@code 5}</li>
+     * <li>{@code 1,2,5}</li>
+     * <li>{@code 3-9}</li>
+     * <li>{@code 2-5,7,20-30}</li>
+     * </ul>
+     */
+    @Parameter
+    private List<TestFilter> testFilters;
 
     public void setImport(List<File> toImport) {
         this.toImport = toImport;
@@ -626,6 +686,7 @@ public class SOAtestMojo extends AbstractMojo {
         if (workItems != null) {
             addOptionalCommand("-workItems", String.join(",", workItems), command); //$NON-NLS-1$
         }
+        addTestFilters(testFilters, command);
         runCommand(log, command);
     }
 
@@ -653,6 +714,23 @@ public class SOAtestMojo extends AbstractMojo {
         if (parameters != null) {
             for (String parameter : parameters) {
                 addOptionalCommand(name, parameter, command);
+            }
+        }
+    }
+
+    private static void addTestFilters(List<TestFilter> testFilters, List<String> command) {
+        if (testFilters != null) {
+            for (TestFilter testFilter : testFilters) {
+                String testName = testFilter.getTestName();
+                if (testName != null && !testName.trim().isEmpty()) {
+                    command.add("-testName"); //$NON-NLS-1$
+                    if (testFilter.getSubstringMatch()) {
+                        command.add("match:"); //$NON-NLS-1$
+                    }
+                    command.add(testName);
+                    addOptionalCommand("dataSourceRow:", testFilter.getDataSourceRow(), command); //$NON-NLS-1$
+                    addOptionalCommand("dataSourceName:", testFilter.getDataSourceName(), command); //$NON-NLS-1$
+                }
             }
         }
     }

@@ -47,6 +47,14 @@
               <exclude>**/ExcludedTest.tst</exclude>
             </excludes>
             <impactedTests>impacted/tests/path</impactedTests>
+            <testFilters>
+              <testFilter>
+                <testName>name</testName>
+                <substringMatch>true</substringMatch>
+                <dataSourceName>dsName</dataSourceName>
+                <dataSourceRow>1</dataSourceRow>
+              </testFilter>
+            </testFilters>
         </configuration>
       </plugin>
     </plugins>
