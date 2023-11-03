@@ -30,6 +30,7 @@ import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -74,7 +75,7 @@ public class SOAtestMojoTest {
             testConfigCommand = constructed.get(1).command();
         }
         assertEquals(7, importCommand.size());
-        assertThat(importCommand.get(0), endsWith("parasoft/soatest/soatestcli" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : "")));
+        assertThat(importCommand.get(0), endsWith(Paths.get("parasoft", "soatest", SystemUtils.IS_OS_WINDOWS ? "soatestcli.exe" : "soatestcli").toString()));
         assertEquals("-data", importCommand.get(1));
         assertThat(importCommand.get(2), startsWith(new File(System.getProperty("java.io.tmpdir"), "soatest.workspace").getAbsolutePath()));
         assertEquals("-settings", importCommand.get(3));
