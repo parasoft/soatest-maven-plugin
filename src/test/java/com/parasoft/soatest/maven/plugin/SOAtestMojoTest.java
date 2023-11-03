@@ -82,7 +82,7 @@ public class SOAtestMojoTest {
         assertEquals("-import", importCommand.get(5));
         assertEquals(pom.getAbsolutePath(), importCommand.get(6));
         assertEquals(28, testConfigCommand.size());
-        assertThat(importCommand.subList(0, 5), contains(testConfigCommand.subList(0, 5).toArray()));
+        assertThat(testConfigCommand.subList(0, 5), contains(importCommand.subList(0, 5).toArray()));
         assertThat(testConfigCommand.subList(5, testConfigCommand.size()), contains(
                 "-config", "soatest.builtin://Demo Configuration",
                 "-publish",
