@@ -391,7 +391,7 @@ public class SOAtestMojo extends AbstractMojo {
     /**
      * Allows you to configure settings directly. Settings passed with this
      * parameter will overwrite those with the same key that are specified using the
-     * {@code soatest.settings} parameter. Example:
+     * {@code settings} parameter. Example:
      *
      * <pre><code>{@literal <properties>}
      *   {@literal <report.dtp.publish>}true{@literal </report.dtp.publish>}
