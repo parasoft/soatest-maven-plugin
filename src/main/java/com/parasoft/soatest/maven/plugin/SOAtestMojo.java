@@ -138,10 +138,30 @@ public class SOAtestMojo extends AbstractMojo {
     private boolean showdetails; // parasoft-suppress OPT.CTLV "injected"
 
     /**
+     * <p>
      * Specifies the active data source within a data group. This parameter must
      * be set to the location of an XML file that specifies the active data
-     * source for each data group within each .tst file contained in the test
-     * run.
+     * source for each data group within each <em>.tst</em> file contained in
+     * the test run. The XML file must use the following format:
+     * </p>
+     * <pre><code>{@literal <tests>
+     *  <test> <!--1 or more-->
+     *     <workspacePath></workspacePath>
+     *     <dataGroups>
+     *       <dataGroup> <!--1 or more-->
+     *         <dataGroupName></dataGroupName>
+     *         <activeDataSourceName></activeDataSourceName>
+     *       </dataGroup>
+     *     </dataGroups>
+     *   </test>
+     * </tests>}</code></pre>
+     * <p>
+     * The {@code <workspacePath>} element for {@code datagroupConfig} and
+     * {@code environmentConfig} should contain the path to the resource (for
+     * example, .tst) in the workspace, not the path on the file system. You can
+     * right-click the .tst file in the SOAtest UI and choose Properties to get
+     * the correct path to the resource.
+     * </p>
      */
     @Parameter(property = "soatest.datagroupconfig")
     private File dataGroupConfig;
@@ -200,17 +220,17 @@ public class SOAtestMojo extends AbstractMojo {
      * values to use for each .tst file contained in the test run. The XML file
      * must use the following format:
      * </p>
-     * <pre><code>{@literal <tests>}
-     * {@literal   <test> <!--1 or more-->}
-     * {@literal     <workspacePath></workspacePath>}
-     * {@literal     <Environment>}
-     * {@literal       <Variable> <!--1 or more-->}
-     * {@literal         <Name></Name>}
-     * {@literal         <Value></Value>}
-     * {@literal       </Variable>}
-     * {@literal     </Environment>}
-     * {@literal   </test>}
-     * {@literal </tests>}</pre></code>
+     * <pre><code>{@literal <tests>
+     *   <test> <!--1 or more-->
+     *     <workspacePath></workspacePath>
+     *     <Environment>
+     *       <Variable> <!--1 or more-->
+     *         <Name></Name>
+     *         <Value></Value>
+     *       </Variable>
+     *     </Environment>
+     *   </test>
+     * </tests>}</code></pre>
      * <p>
      * The {@code <workspacePath>} element for {@code datagroupConfig} and
      * {@code environmentConfig} should contain the path to the resource (for
