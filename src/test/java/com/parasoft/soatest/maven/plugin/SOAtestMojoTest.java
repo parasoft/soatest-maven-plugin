@@ -19,7 +19,6 @@ package com.parasoft.soatest.maven.plugin;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -75,12 +74,15 @@ public class SOAtestMojoTest {
             testConfigCommand = constructed.get(1).command();
         }
         assertEquals(7, importCommand.size());
-        checkBaseCommand(pom, importCommand);
+        assertThat(importCommand.get(0), endsWith("parasoft/soatest/soatestcli" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : "")));
+        assertEquals("-data", importCommand.get(1));
+        assertThat(importCommand.get(2), startsWith(new File(System.getProperty("java.io.tmpdir"), "soatest.workspace").getAbsolutePath()));
+        assertEquals("-settings", importCommand.get(3));
+        assertEquals(new File(pom, "settings.properties").getAbsolutePath(), importCommand.get(4));
         assertEquals("-import", importCommand.get(5));
         assertEquals(pom.getAbsolutePath(), importCommand.get(6));
-
         assertEquals(28, testConfigCommand.size());
-        checkBaseCommand(pom, testConfigCommand);
+        assertThat(importCommand.subList(0, 5), contains(testConfigCommand.subList(0, 5).toArray()));
         assertThat(testConfigCommand.subList(5, testConfigCommand.size()), contains(
                 "-config", "soatest.builtin://Demo Configuration",
                 "-publish",
@@ -96,16 +98,6 @@ public class SOAtestMojoTest {
                 "-resource", "testProject",
                 "-property", "techsupport.auto_creation=true"
                 ));
-    }
-
-    private static void checkBaseCommand(File baseDir, List<String> command) {
-        assertThat(command.size(), greaterThan(5));
-        List<String> baseCommand = command.subList(0, 5);
-        assertThat(baseCommand.get(0), endsWith("parasoft/soatest/soatestcli" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : "")));
-        assertEquals("-data", baseCommand.get(1));
-        assertThat(baseCommand.get(2), startsWith(new File(System.getProperty("java.io.tmpdir"), "soatest.workspace").getAbsolutePath()));
-        assertEquals("-settings", baseCommand.get(3));
-        assertEquals(new File(baseDir, "settings.properties").getAbsolutePath(), baseCommand.get(4));
     }
 
     /** Do not need the MojoRule. */
