@@ -371,7 +371,7 @@ public class SOAtestMojo extends AbstractMojo {
      *   {@literal <include>**}/Test2.tst{@literal </include>}
      * {@literal </includes>}</code></pre>
      */
-    @Parameter(name = "includes", property = "soatest.includes")
+    @Parameter(property = "soatest.includes")
     private List<String> includes;
 
     /**
@@ -385,7 +385,7 @@ public class SOAtestMojo extends AbstractMojo {
      *   {@literal <exclude>**}/Test2.tst{@literal </exclude>}
      * {@literal </excludes>}</code></pre>
      */
-    @Parameter(name = "excludes", property = "soatest.excludes")
+    @Parameter(property = "soatest.excludes")
     private List<String> excludes;
 
     /**
@@ -398,7 +398,7 @@ public class SOAtestMojo extends AbstractMojo {
      *   {@literal <techsupport.auto_creation>}true{@literal </techsupport.auto_creation>}
      * {@literal </properties>}</code></pre>
      */
-    @Parameter(name = "properties")
+    @Parameter
     private Map<String, String> properties;
 
     /**
@@ -475,7 +475,7 @@ public class SOAtestMojo extends AbstractMojo {
      * <li>{@code /ProjectB/B.tst}</li>
      * </ol>
      */
-    @Parameter(name = "resources", property = "soatest.resources")
+    @Parameter(property = "soatest.resources")
     private List<String> resources;
 
     /**
@@ -487,7 +487,7 @@ public class SOAtestMojo extends AbstractMojo {
      *   <workItem>TEST-16447</workItem>
      * </workItems>}</code></pre>
      */
-    @Parameter(name = "workItems", property = "soatest.workitems")
+    @Parameter(property = "soatest.workitems")
     private List<String> workItems;
 
     /**
