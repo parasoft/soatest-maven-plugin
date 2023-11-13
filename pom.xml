@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.parasoft</groupId>
   <artifactId>soatest-maven-plugin</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>SOAtest Maven Plugin</name>
@@ -95,7 +93,7 @@
       <name>Apache-2.0</name>
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
-      <comments>&#169; Copyright 2023 Parasoft Corporation</comments>
+      <comments>© Copyright 2023 Parasoft Corporation</comments>
     </license>
   </licenses>
 
@@ -103,7 +101,7 @@
     <url>https://github.com/parasoft/soatest-maven-plugin</url>
     <connection>scm:git:https://github.com/parasoft/soatest-maven-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/parasoft/soatest-maven-plugin.git</developerConnection>
-    <tag>master</tag>
+    <tag>v1.0.0</tag>
   </scm>
 
   <dependencyManagement>
