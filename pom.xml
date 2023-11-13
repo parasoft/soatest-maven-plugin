@@ -35,6 +35,7 @@
     <maven-plugin-tools.version>3.10.1</maven-plugin-tools.version>
     <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
     <maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
+    <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
     <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
@@ -214,6 +215,10 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>${maven-project-info-reports-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${maven-release-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
