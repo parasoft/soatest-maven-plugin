@@ -9,7 +9,7 @@
   <packaging>maven-plugin</packaging>
 
   <name>SOAtest Maven Plugin</name>
-  <description>This plugin is available from Parasoft under an open-source license.</description>
+  <description>This plugin is available from Parasoft under the Apache 2.0 license.</description>
   <url>https://github.com/parasoft/soatest-maven-plugin</url>
   <inceptionYear>2023</inceptionYear>
 
