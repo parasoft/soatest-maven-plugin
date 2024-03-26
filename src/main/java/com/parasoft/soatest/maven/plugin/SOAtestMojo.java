@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -40,6 +42,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.utils.xml.PrettyPrintXMLWriter;
+import org.apache.maven.shared.utils.xml.XMLWriter;
 
 /**
  * Executes Parasoft SOAtest test suites with soatestcli.
@@ -93,7 +97,7 @@ public class SOAtestMojo extends AbstractMojo {
     private boolean noImport; // parasoft-suppress OPT.CTLV "injected"
 
     /**
-     * The locations of Eclipse projects to import into the workspace prior to
+     * The locations of projects to import into the workspace prior to
      * executing tests. Defaults to ${project.basedir}. Example:
      *
      * <pre><code>{@literal <import>}
@@ -591,9 +595,10 @@ public class SOAtestMojo extends AbstractMojo {
                 throw new MojoExecutionException(e);
             }
         }
+        List<Path> tempDotProjects = new LinkedList<>();
         List<String> baseCommand = getBaseCommand(log, soatestcli, workspace);
         try {
-            runImport(log, baseCommand);
+            runImport(log, baseCommand, tempDotProjects);
             runTestConfig(log, baseCommand);
         } finally {
             if (data == null) {
@@ -603,6 +608,7 @@ public class SOAtestMojo extends AbstractMojo {
                     log.debug(e);
                 }
             }
+            tempDotProjects.stream().map(Path::toFile).forEach(File::delete);
         }
     }
 
@@ -621,7 +627,7 @@ public class SOAtestMojo extends AbstractMojo {
         return Collections.unmodifiableList(baseCommand);
     }
 
-    private void runImport(Log log, List<String> baseCommand) throws MojoExecutionException {
+    private void runImport(Log log, List<String> baseCommand, List<Path> tempDotProjects) throws MojoExecutionException {
         if (noImport) {
             log.debug("skipping import"); //$NON-NLS-1$
         } else {
@@ -637,14 +643,26 @@ public class SOAtestMojo extends AbstractMojo {
                         throw new MojoExecutionException(Messages.get("invalid.project.file", projectLoc)); //$NON-NLS-1$
                     }
                 } else {
-                    try (Stream<Path> walkStream = Files.walk(projectLoc.toPath())) {
-                        if (!walkStream.filter(Files::isRegularFile)
-                                .filter(p -> ".project".equals(p.getFileName().toString())) //$NON-NLS-1$
-                                .findFirst().isPresent()) {
-                            throw new MojoExecutionException(Messages.get("invalid.project.dotproject", projectLoc)); //$NON-NLS-1$
+                    Path projectPath = projectLoc.toPath();
+                    Path dotProject = projectPath.resolve(".project"); //$NON-NLS-1$
+                    boolean foundDotProject = Files.isRegularFile(dotProject);
+                    if (!foundDotProject) {
+                        try (Stream<Path> walkStream = Files.walk(projectPath)) {
+                            foundDotProject = walkStream.filter(Files::isRegularFile)
+                                    .filter(p -> ".project".equals(p.getFileName().toString())) //$NON-NLS-1$
+                                    .findFirst().isPresent();
+                        } catch (IOException e) {
+                            log.warn(e);
                         }
-                    } catch (IOException e) {
-                        log.warn(e);
+                    }
+                    if (!foundDotProject) {
+                        try {
+                            log.debug("writing " + dotProject); //$NON-NLS-1$
+                            tempDotProjects.add(dotProject);
+                            writeDotProject(dotProject);
+                        } catch (IOException e) {
+                            throw new MojoExecutionException(Messages.get("invalid.project.dotproject", projectLoc, dotProject), e); //$NON-NLS-1$
+                        }
                     }
                 }
                 List<String> command = new ArrayList<>(baseCommand);
@@ -652,6 +670,25 @@ public class SOAtestMojo extends AbstractMojo {
                 command.add(projectLoc.getAbsolutePath());
                 runCommand(log, command);
             }
+        }
+    }
+
+    private static void writeDotProject(Path dotProject) throws IOException {
+        try (Writer writer = Files.newBufferedWriter(dotProject)) {
+            XMLWriter xmlWriter = new PrettyPrintXMLWriter(writer, StandardCharsets.UTF_8.name(), null);
+            xmlWriter.startElement("projectDescription"); //$NON-NLS-1$
+            xmlWriter.startElement("name"); //$NON-NLS-1$
+            xmlWriter.writeText(dotProject.getParent().getFileName().toString());
+            xmlWriter.endElement();
+            xmlWriter.startElement("comment"); //$NON-NLS-1$
+            xmlWriter.endElement();
+            xmlWriter.startElement("projects"); //$NON-NLS-1$
+            xmlWriter.endElement();
+            xmlWriter.startElement("buildSpec"); //$NON-NLS-1$
+            xmlWriter.endElement();
+            xmlWriter.startElement("natures"); //$NON-NLS-1$
+            xmlWriter.endElement();
+            xmlWriter.endElement();
         }
     }
 

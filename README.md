@@ -10,7 +10,7 @@ Include the SOAtest Maven Plugin in your project
       <plugin>
         <groupId>com.parasoft</groupId>
         <artifactId>soatest-maven-plugin</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
         <executions>
           <execution>
             <id>soatest</id>
