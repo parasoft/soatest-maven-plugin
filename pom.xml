@@ -5,7 +5,7 @@
 
   <groupId>com.parasoft</groupId>
   <artifactId>soatest-maven-plugin</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>SOAtest Maven Plugin</name>
@@ -102,7 +102,7 @@
     <url>https://github.com/parasoft/soatest-maven-plugin</url>
     <connection>scm:git:https://github.com/parasoft/soatest-maven-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/parasoft/soatest-maven-plugin.git</developerConnection>
-    <tag>v1.0.1</tag>
+    <tag>master</tag>
   </scm>
 
   <dependencyManagement>
