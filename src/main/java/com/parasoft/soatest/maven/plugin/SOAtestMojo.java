@@ -26,6 +26,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -598,8 +600,10 @@ public class SOAtestMojo extends AbstractMojo {
         List<Path> tempDotProjects = new LinkedList<>();
         List<String> baseCommand = getBaseCommand(log, soatestcli, workspace);
         try {
+            prepareReportsDirectory();
             runImport(log, baseCommand, tempDotProjects);
             runTestConfig(log, baseCommand);
+            parseXmlReport(log);
         } finally {
             if (data == null) {
                 try (Stream<Path> stream = Files.walk(workspace)) {
@@ -794,5 +798,91 @@ public class SOAtestMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException(e);
         }
+    }
+
+    private static String getTimestamp() {
+        // Creates 19-digit timestamp string
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("QQyyyyMMddHHmmssSSS"));        
+    }
+
+    private boolean reportParameterPathSpecifiesCustomFilename() {
+        if (report == null) {
+            return false;
+        }
+
+        String path = report.getAbsolutePath().toLowerCase();
+
+        if (path.endsWith(".xml") || path.endsWith(".html")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void prepareReportsDirectory() {
+        // This case means that the report parameter specifies a custom filename for reports,
+        // so there is no need to prepare the reports directory. Preparing the directory in
+        // this context means that any existing report.xml and/or report.html files will be
+        // renamed so that newly generated reports can use those names. This is necessary to
+        // reference the reports by an expected name down the line in order to parse XML
+        // contents. We do not care about renaming reports using custom filenames since we
+        // know that they will be generated if they do not exist, or, overwritten if they do
+        // exist but will retain the same filename as before.
+        if (reportParameterPathSpecifiesCustomFilename()) {
+            return;
+        }
+        
+        String reportsDirectoryPath = report == null ? System.getProperty("user.dir") : report.getAbsolutePath();
+        File reportsDirectory = new File(reportsDirectoryPath);
+
+        if (!reportsDirectory.exists() || !reportsDirectory.isDirectory()) {
+            return;
+        }
+
+        for (File file : reportsDirectory.listFiles()) {
+            if (file.isFile()) {
+                String filename = file.getName().toLowerCase();
+
+                if (filename.equals("report.xml") || filename.equals("report.html")) {
+                    String extension = filename.endsWith(".xml") ? ".xml" : ".html";
+                    String newFilename = "report_" + getTimestamp() + extension;
+                    file.renameTo(new File(reportsDirectory, newFilename));
+                }
+            }
+        }
+    }
+
+    private void parseXmlReport(Log log) throws MojoExecutionException {        
+        log.debug("Report Parameter Path: " + report.getAbsolutePath());
+        log.debug("Report Parameter Path is File? " + (report.isFile() ? "True" : "False"));
+        log.debug("Report Parameter Path is Directory? " + (report.isDirectory() ? "True" : "False"));
+        log.debug("Report Parameter Path Exists? " + (report.exists() ? "True" : "False"));
+
+        File xmlReport = null;
+
+        if (report == null) {
+            // This case means report parameter path was not specified, so we
+            // can expect a report.xml in the execution directory by default.
+            xmlReport = new File(System.getProperty("user.dir"), "report.xml");
+        } else if (reportParameterPathSpecifiesCustomFilename()) {
+            // This case means report parameter path specified a custom filename,
+            // so we can expect a filename.xml in the filename's parent directory.
+            String filename = report.getName();
+            int extensionIndex = filename.lastIndexOf(".");
+            filename = filename.substring(0, extensionIndex) + ".xml";
+            xmlReport = new File(report.getParent(), filename);
+        } else if (report.isDirectory()) {
+            // This case means report parameter path specified a custom directory but no
+            // custom filename, so we can expect a report.xml in the custom directory. 
+            xmlReport = new File(report, "report.xml");
+        }
+
+        if (xmlReport == null || !xmlReport.exists() || !xmlReport.isFile()) {
+            // TODO: Add custom message via Messages.properties
+            throw new MojoExecutionException("Unable to find a valid xml report for this test execution.");
+        }
+
+        // TODO: Add custom message via Messages.properties
+        log.debug("The following XML Report Was Found: " + xmlReport.getAbsolutePath());
     }
 }
