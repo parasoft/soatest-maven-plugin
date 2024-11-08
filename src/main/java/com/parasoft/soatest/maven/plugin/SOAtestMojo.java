@@ -26,6 +26,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -598,8 +600,10 @@ public class SOAtestMojo extends AbstractMojo {
         List<Path> tempDotProjects = new LinkedList<>();
         List<String> baseCommand = getBaseCommand(log, soatestcli, workspace);
         try {
+            renameExistingReports();
             runImport(log, baseCommand, tempDotProjects);
             runTestConfig(log, baseCommand);
+            parseXmlReport(log);
         } finally {
             if (data == null) {
                 try (Stream<Path> stream = Files.walk(workspace)) {
@@ -794,5 +798,84 @@ public class SOAtestMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException(e);
         }
+    }
+
+    private static String getTimestamp() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("QQyyyyMMddHHmmssSSS"));        
+    }
+
+    private boolean reportParameterHasFilename() {
+        if (report == null) {
+            return false;
+        }
+
+        String path = report.getAbsolutePath().toLowerCase();
+
+        if (path.endsWith(".xml") || path.endsWith(".html")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isDefaultReportName(String filename) {
+        return filename.equals("report.xml") || filename.equals("report.html");
+    }
+
+    private void renameExistingReports() {       
+        String reportsDirectoryPath;
+
+        if (report == null) {
+            reportsDirectoryPath = System.getProperty("user.dir");
+        } else if (reportParameterHasFilename()) {
+            if (!isDefaultReportName(report.getName().toLowerCase())) {
+                return;
+            }
+
+            reportsDirectoryPath = report.getParent();
+        } else {
+            reportsDirectoryPath = report.getAbsolutePath();
+        }
+
+        File reportsDirectory = new File(reportsDirectoryPath);
+
+        if (!reportsDirectory.exists() || !reportsDirectory.isDirectory()) {
+            return;
+        }
+
+        String timestamp = getTimestamp();
+
+        for (File file : reportsDirectory.listFiles()) {
+            if (file.isFile()) {
+                String filename = file.getName().toLowerCase();
+
+                if (isDefaultReportName(filename)) {
+                    String extension = filename.endsWith(".xml") ? ".xml" : ".html";
+                    String newFilename = "report_" + timestamp + extension;
+                    file.renameTo(new File(reportsDirectory, newFilename));
+                }
+            }
+        }
+    }
+
+    private void parseXmlReport(Log log) {        
+        File xmlReport;
+
+        if (report == null) {
+            xmlReport = new File(System.getProperty("user.dir"), "report.xml");
+        } else if (reportParameterHasFilename()) {
+            String filename = report.getName();
+            int extensionIndex = filename.lastIndexOf(".");
+            filename = filename.substring(0, extensionIndex) + ".xml";
+            xmlReport = new File(report.getParent(), filename);
+        } else {
+            xmlReport = new File(report, "report.xml");
+        }
+
+        if (!xmlReport.exists() || !xmlReport.isFile()) {
+            return;
+        }
+
+        log.info("Found the following XML report: " + xmlReport.getAbsolutePath());
     }
 }
