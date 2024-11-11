@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
+import javax.xml.stream.events.XMLEvent;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -46,6 +48,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.xml.PrettyPrintXMLWriter;
 import org.apache.maven.shared.utils.xml.XMLWriter;
+import org.codehaus.stax2.XMLInputFactory2;
+import org.codehaus.stax2.XMLStreamReader2;
 
 /**
  * Executes Parasoft SOAtest test suites with soatestcli.
@@ -801,7 +805,7 @@ public class SOAtestMojo extends AbstractMojo {
     }
 
     private static String getTimestamp() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("QQyyyyMMddHHmmssSSS"));        
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("QQyyyyMMddHHmmssSSS")); //$NON-NLS-1$
     }
 
     private boolean reportParameterHasFilename() {
@@ -811,7 +815,7 @@ public class SOAtestMojo extends AbstractMojo {
 
         String path = report.getAbsolutePath().toLowerCase();
 
-        if (path.endsWith(".xml") || path.endsWith(".html")) {
+        if (path.endsWith(".xml") || path.endsWith(".html")) { //$NON-NLS-1$ //$NON-NLS-2$
             return true;
         }
 
@@ -819,14 +823,14 @@ public class SOAtestMojo extends AbstractMojo {
     }
 
     private boolean isDefaultReportName(String filename) {
-        return filename.equals("report.xml") || filename.equals("report.html");
+        return filename.equals("report.xml") || filename.equals("report.html"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void renameExistingReports() {       
+    private void renameExistingReports() {
         String reportsDirectoryPath;
 
         if (report == null) {
-            reportsDirectoryPath = System.getProperty("user.dir");
+            reportsDirectoryPath = System.getProperty("user.dir"); //$NON-NLS-1$
         } else if (reportParameterHasFilename()) {
             if (!isDefaultReportName(report.getName().toLowerCase())) {
                 return;
@@ -850,32 +854,104 @@ public class SOAtestMojo extends AbstractMojo {
                 String filename = file.getName().toLowerCase();
 
                 if (isDefaultReportName(filename)) {
-                    String extension = filename.endsWith(".xml") ? ".xml" : ".html";
-                    String newFilename = "report_" + timestamp + extension;
+                    String extension = filename.endsWith(".xml") ? ".xml" : ".html"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    String newFilename = "report_" + timestamp + extension; //$NON-NLS-1$
                     file.renameTo(new File(reportsDirectory, newFilename));
                 }
             }
         }
     }
 
-    private void parseXmlReport(Log log) {        
+    private File getXmlReport() {
         File xmlReport;
 
         if (report == null) {
-            xmlReport = new File(System.getProperty("user.dir"), "report.xml");
+            xmlReport = new File(System.getProperty("user.dir"), "report.xml"); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (reportParameterHasFilename()) {
             String filename = report.getName();
-            int extensionIndex = filename.lastIndexOf(".");
-            filename = filename.substring(0, extensionIndex) + ".xml";
+            int extensionIndex = filename.lastIndexOf("."); //$NON-NLS-1$
+            filename = filename.substring(0, extensionIndex) + ".xml"; //$NON-NLS-1$
             xmlReport = new File(report.getParent(), filename);
         } else {
-            xmlReport = new File(report, "report.xml");
+            xmlReport = new File(report, "report.xml"); //$NON-NLS-1$
         }
+
+        return xmlReport;
+    }
+
+    private void parseXmlReport(Log log) {
+        File xmlReport = getXmlReport();
 
         if (!xmlReport.exists() || !xmlReport.isFile()) {
             return;
         }
 
-        log.info("Found the following XML report: " + xmlReport.getAbsolutePath());
+        XMLInputFactory2 xmlInputFactory = null;
+        XMLStreamReader2 xmlStreamReader = null;
+
+        try {
+            xmlInputFactory = (XMLInputFactory2)XMLInputFactory2.newInstance();
+            xmlStreamReader = (XMLStreamReader2)xmlInputFactory.createXMLStreamReader(xmlReport);
+
+            boolean insideFunctionalTestExecutionDetails = false;
+
+            while (xmlStreamReader.hasNext()) {
+                int eventType = xmlStreamReader.next();
+
+                if (eventType == XMLEvent.START_ELEMENT) {
+                    String currentElement = xmlStreamReader.getName().toString();
+
+                    if (insideFunctionalTestExecutionDetails && currentElement.equals("Total")) { //$NON-NLS-1$
+                        String totalAttributeValue = xmlStreamReader.getAttributeValue(null, "total"); //$NON-NLS-1$
+                        String failAttributeValue = xmlStreamReader.getAttributeValue(null, "fail"); //$NON-NLS-1$
+                        String passAttributeValue = xmlStreamReader.getAttributeValue(null, "pass"); //$NON-NLS-1$
+
+                        int total = totalAttributeValue == null ? 0 : Integer.parseInt(totalAttributeValue);
+                        int fail = failAttributeValue == null ? 0 : Integer.parseInt(failAttributeValue);
+                        int pass = passAttributeValue == null ? 0 : Integer.parseInt(passAttributeValue);
+
+                        createFailsafeSummary(total, fail, pass, log);
+                        break;
+                    } else if (foundFunctionalTestExecutionDetails(xmlStreamReader, currentElement)) {
+                        insideFunctionalTestExecutionDetails = true;
+                    }
+                } else if (eventType == XMLEvent.END_ELEMENT) {
+                    String currentElement = xmlStreamReader.getName().toString();
+
+                    if (insideFunctionalTestExecutionDetails && (currentElement.equals("Total") || currentElement.equals("ExecutedTestsDetails"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(e);
+        } finally {
+            try {
+                xmlStreamReader.closeCompletely();
+            } catch (Exception e) {
+                log.error(e);
+            }
+        }
+    }
+
+    private static boolean foundFunctionalTestExecutionDetails(XMLStreamReader2 reader, String currentElement) {
+        if (!currentElement.equals("ExecutedTestsDetails")) { //$NON-NLS-1$
+            return false;
+        }
+
+        String functionalAttributeValue = reader.getAttributeValue(null, "functional"); //$NON-NLS-1$
+        String typeAttributeValue = reader.getAttributeValue(null, "type"); //$NON-NLS-1$
+
+        boolean foundExpectedFunctionalValue = functionalAttributeValue == null ? false : functionalAttributeValue.equals("true"); //$NON-NLS-1$
+        boolean foundExpectedTypeValue = typeAttributeValue == null ? false : typeAttributeValue.equals("FT"); //$NON-NLS-1$
+
+        return foundExpectedFunctionalValue && foundExpectedTypeValue;
+    }
+
+    private static void createFailsafeSummary(int total, int fail, int pass, Log log) {
+        log.info(Messages.get("functional.test.execution.summary")); //$NON-NLS-1$
+        log.info(Messages.get("functional.test.execution.total", total)); //$NON-NLS-1$
+        log.info(Messages.get("functional.test.execution.passed", pass)); //$NON-NLS-1$
+        log.info(Messages.get("functional.test.execution.failed", fail)); //$NON-NLS-1$
     }
 }
