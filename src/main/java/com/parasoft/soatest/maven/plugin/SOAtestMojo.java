@@ -904,13 +904,11 @@ public class SOAtestMojo extends AbstractMojo {
                     if (insideFunctionalTestExecutionDetails && currentElement.equals("Total")) { //$NON-NLS-1$
                         String totalAttributeValue = xmlStreamReader.getAttributeValue(null, "total"); //$NON-NLS-1$
                         String failAttributeValue = xmlStreamReader.getAttributeValue(null, "fail"); //$NON-NLS-1$
-                        String passAttributeValue = xmlStreamReader.getAttributeValue(null, "pass"); //$NON-NLS-1$
 
                         int total = totalAttributeValue == null ? 0 : Integer.parseInt(totalAttributeValue);
                         int fail = failAttributeValue == null ? 0 : Integer.parseInt(failAttributeValue);
-                        int pass = passAttributeValue == null ? 0 : Integer.parseInt(passAttributeValue);
 
-                        createFailsafeSummary(xmlReport.getParentFile(), total, fail, pass, log);
+                        createFailsafeSummary(xmlReport.getParentFile(), total, fail, log);
                         break;
                     } else if (foundFunctionalTestExecutionDetails(xmlStreamReader, currentElement)) {
                         insideFunctionalTestExecutionDetails = true;
@@ -948,7 +946,7 @@ public class SOAtestMojo extends AbstractMojo {
         return foundExpectedFunctionalValue && foundExpectedTypeValue;
     }
 
-    private static void createFailsafeSummary(File reportsDirectory, int total, int fail, int pass, Log log) {
+    private static void createFailsafeSummary(File reportsDirectory, int total, int fail, Log log) {
         Path failsafeSummaryPath = reportsDirectory.toPath().resolve("failsafe-summary.xml"); //$NON-NLS-1$
         
         try (Writer bufferedWriter = Files.newBufferedWriter(failsafeSummaryPath)) {
