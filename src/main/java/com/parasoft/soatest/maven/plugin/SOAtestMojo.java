@@ -581,6 +581,9 @@ public class SOAtestMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         Log log = getLog();
+
+        deleteExistingFailsafeSummary(log);
+
         if (skip) {
             log.info(Messages.get("soatest.skip")); //$NON-NLS-1$
             return;
@@ -974,6 +977,22 @@ public class SOAtestMojo extends AbstractMojo {
             xmlWriter.startElement("failureMessage"); //$NON-NLS-1$
             xmlWriter.endElement();
             xmlWriter.endElement();
+        } catch (Exception e) {
+            log.error(e);
+        }
+    }
+
+    private void deleteExistingFailsafeSummary(Log log) {
+        File reportsDirectory = getXmlReport().getParentFile();
+
+        if (!reportsDirectory.exists() || !reportsDirectory.isDirectory()) {
+            return;
+        }
+
+        Path failsafeSummaryPath = reportsDirectory.toPath().resolve("failsafe-summary.xml"); //$NON-NLS-1$
+
+        try {
+            Files.deleteIfExists(failsafeSummaryPath);
         } catch (Exception e) {
             log.error(e);
         }
