@@ -904,13 +904,11 @@ public class SOAtestMojo extends AbstractMojo {
                     if (insideFunctionalTestExecutionDetails && currentElement.equals("Total")) { //$NON-NLS-1$
                         String totalAttributeValue = xmlStreamReader.getAttributeValue(null, "total"); //$NON-NLS-1$
                         String failAttributeValue = xmlStreamReader.getAttributeValue(null, "fail"); //$NON-NLS-1$
-                        String passAttributeValue = xmlStreamReader.getAttributeValue(null, "pass"); //$NON-NLS-1$
 
                         int total = totalAttributeValue == null ? 0 : Integer.parseInt(totalAttributeValue);
                         int fail = failAttributeValue == null ? 0 : Integer.parseInt(failAttributeValue);
-                        int pass = passAttributeValue == null ? 0 : Integer.parseInt(passAttributeValue);
 
-                        createFailsafeSummary(total, fail, pass, log);
+                        createFailsafeSummary(xmlReport.getParentFile(), total, fail, log);
                         break;
                     } else if (foundFunctionalTestExecutionDetails(xmlStreamReader, currentElement)) {
                         insideFunctionalTestExecutionDetails = true;
@@ -948,10 +946,36 @@ public class SOAtestMojo extends AbstractMojo {
         return foundExpectedFunctionalValue && foundExpectedTypeValue;
     }
 
-    private static void createFailsafeSummary(int total, int fail, int pass, Log log) {
-        log.info(Messages.get("functional.test.execution.summary")); //$NON-NLS-1$
-        log.info(Messages.get("functional.test.execution.total", total)); //$NON-NLS-1$
-        log.info(Messages.get("functional.test.execution.passed", pass)); //$NON-NLS-1$
-        log.info(Messages.get("functional.test.execution.failed", fail)); //$NON-NLS-1$
+    private static void createFailsafeSummary(File reportsDirectory, int total, int fail, Log log) {
+        Path failsafeSummaryPath = reportsDirectory.toPath().resolve("failsafe-summary.xml"); //$NON-NLS-1$
+        
+        try (Writer bufferedWriter = Files.newBufferedWriter(failsafeSummaryPath)) {
+            XMLWriter xmlWriter = new PrettyPrintXMLWriter(bufferedWriter, StandardCharsets.UTF_8.name(), null);
+            xmlWriter.startElement("failsafe-summary"); //$NON-NLS-1$
+
+            if (total == 0 || fail > 0) {
+                String result = total == 0 ? "NO_TESTS" : "FAILURE"; //$NON-NLS-1$ //$NON-NLS-2$
+                xmlWriter.addAttribute("result", result); //$NON-NLS-1$
+            }
+
+            xmlWriter.addAttribute("timeout", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            xmlWriter.startElement("completed"); //$NON-NLS-1$
+            xmlWriter.writeText(String.valueOf(total));
+            xmlWriter.endElement();
+            xmlWriter.startElement("errors"); //$NON-NLS-1$
+            xmlWriter.writeText("0"); //$NON-NLS-1$
+            xmlWriter.endElement();
+            xmlWriter.startElement("failures"); //$NON-NLS-1$
+            xmlWriter.writeText(String.valueOf(fail));
+            xmlWriter.endElement();
+            xmlWriter.startElement("skipped"); //$NON-NLS-1$
+            xmlWriter.writeText("0"); //$NON-NLS-1$
+            xmlWriter.endElement();
+            xmlWriter.startElement("failureMessage"); //$NON-NLS-1$
+            xmlWriter.endElement();
+            xmlWriter.endElement();
+        } catch (Exception e) {
+            log.error(e);
+        }
     }
 }
