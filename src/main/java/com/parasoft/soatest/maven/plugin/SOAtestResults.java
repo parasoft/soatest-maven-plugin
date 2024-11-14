@@ -33,15 +33,15 @@ import org.codehaus.stax2.XMLStreamReader2;
 
 
 public class SOAtestResults {
-    private int total;
-    private int failed;
+    private final int total;
+    private final int failed;
 
-    public SOAtestResults() {
+    private SOAtestResults() {
         this.total = 0;
         this.failed = 0;
     }
 
-    public SOAtestResults(int total, int failed) {
+    private SOAtestResults(int total, int failed) {
         this.total = total;
         this.failed = failed;
     }
