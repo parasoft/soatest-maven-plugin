@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ResultsSession>
+    <Exec>
+        <ExecutedTestsDetails functional="true" type="FT">
+            <Total fail="2" total="10" pass="8" name="Passed / Total" authErr="0;" authFail="2;"></Total>
+        </ExecutedTestsDetails>
+    </Exec>
+</ResultsSession>
