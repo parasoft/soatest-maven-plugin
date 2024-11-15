@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -34,7 +33,6 @@ public class SOAtestResultsTest {
     @Test
     public void parseReportXML_WhenReportHasZeroTests_ReturnsTotalZeroAndFailedZero() throws Exception {
         File report = new File("target/test-classes/report_with_total_zero.xml");
-        assertNotNull(report);
         assertTrue(report.exists());
 
         SOAtestResults results = SOAtestResults.parseReportXML(report);
@@ -45,7 +43,6 @@ public class SOAtestResultsTest {
     @Test
     public void parseReportXML_WhenReportHasTenTestsAndAllPass_ReturnsTotalTenAndFailedZero() throws Exception {
         File report = new File("target/test-classes/report_with_total_ten_pass_ten.xml");
-        assertNotNull(report);
         assertTrue(report.exists());
 
         SOAtestResults results = SOAtestResults.parseReportXML(report);
@@ -56,7 +53,6 @@ public class SOAtestResultsTest {
     @Test
     public void parseReportXML_WhenReportHasTenTestsAndTwoFail_ReturnsTotalTenAndFailedTwo() throws Exception {
         File report = new File("target/test-classes/report_with_total_ten_fail_two.xml");
-        assertNotNull(report);
         assertTrue(report.exists());
 
         SOAtestResults results = SOAtestResults.parseReportXML(report);
@@ -67,16 +63,12 @@ public class SOAtestResultsTest {
     @Test
     public void writeFailsafeSummary_WhenReportHasZeroTests_WritesCompletedZero() throws Exception {
         File report = new File("target/test-classes/report_with_total_zero.xml");
-        assertNotNull(report);
         assertTrue(report.exists());
 
         File expectedSummary = new File("target/test-classes/failsafe_summary_completed_zero.xml");
-        assertNotNull(expectedSummary);
         assertTrue(expectedSummary.exists());
 
         Path actualSummary = Paths.get("target/test-classes/failsafe-summary.xml");
-        assertNotNull(actualSummary);
-
         SOAtestResults results = SOAtestResults.parseReportXML(report);
         results.writeFailsafeSummary(actualSummary);
 
@@ -88,16 +80,12 @@ public class SOAtestResultsTest {
     @Test
     public void writeFailsafeSummary_WhenReportHasTenTestsAndAllPass_WritesCompletedTen() throws Exception {
         File report = new File("target/test-classes/report_with_total_ten_pass_ten.xml");
-        assertNotNull(report);
         assertTrue(report.exists());
 
         File expectedSummary = new File("target/test-classes/failsafe_summary_completed_ten.xml");
-        assertNotNull(expectedSummary);
         assertTrue(expectedSummary.exists());
 
         Path actualSummary = Paths.get("target/test-classes/failsafe-summary.xml");
-        assertNotNull(actualSummary);
-
         SOAtestResults results = SOAtestResults.parseReportXML(report);
         results.writeFailsafeSummary(actualSummary);
 
@@ -109,16 +97,12 @@ public class SOAtestResultsTest {
     @Test
     public void writeFailsafeSummary_WhenReportHasTenTestsAndTwoFail_WritesCompletedTenFailuresTwo() throws Exception {
         File report = new File("target/test-classes/report_with_total_ten_fail_two.xml");
-        assertNotNull(report);
         assertTrue(report.exists());
 
         File expectedSummary = new File("target/test-classes/failsafe_summary_completed_ten_failures_two.xml");
-        assertNotNull(expectedSummary);
         assertTrue(expectedSummary.exists());
 
         Path actualSummary = Paths.get("target/test-classes/failsafe-summary.xml");
-        assertNotNull(actualSummary);
-
         SOAtestResults results = SOAtestResults.parseReportXML(report);
         results.writeFailsafeSummary(actualSummary);
 
