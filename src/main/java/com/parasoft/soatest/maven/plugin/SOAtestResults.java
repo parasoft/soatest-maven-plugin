@@ -46,6 +46,14 @@ public class SOAtestResults {
         this.failed = failed;
     }
 
+    public int getTotal() {
+        return this.total;
+    }
+
+    public int getFailed() {
+        return this.failed;
+    }
+
     public static SOAtestResults parseReportXML(File report) throws XMLStreamException {
         XMLStreamReader2 reader = null;
 
